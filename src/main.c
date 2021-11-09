@@ -1,10 +1,10 @@
 #include <lexer.h>
 
-int main(){
+int main() {
 	int r;
-	do{
+	do {
 		r = yylex();
 		printf("%d\n", r);
-	} while (r != 0);
+	} while(r != 0);
 	return 0;
 }
