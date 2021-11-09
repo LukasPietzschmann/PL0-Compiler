@@ -1,6 +1,6 @@
-#line 1 "lexer.c"
+#line 1 "/Volumes/GoogleDrive/Meine Ablage/Studium/Semester7/Compilerbau/Compiler/src/lexer.c"
 
-#line 3 "lexer.c"
+#line 3 "/Volumes/GoogleDrive/Meine Ablage/Studium/Semester7/Compilerbau/Compiler/src/lexer.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -47,7 +47,6 @@ typedef int16_t flex_int16_t;
 typedef uint16_t flex_uint16_t;
 typedef int32_t flex_int32_t;
 typedef uint32_t flex_uint32_t;
-typedef uint64_t flex_uint64_t;
 #else
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
@@ -156,7 +155,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 typedef size_t yy_size_t;
 #endif
 
-extern yy_size_t yyleng;
+extern int yyleng;
 
 extern FILE *yyin, *yyout;
 
@@ -199,7 +198,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	yy_size_t yy_n_chars;
+	int yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -268,8 +267,8 @@ static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
-static yy_size_t yy_n_chars;		/* number of characters read into yy_ch_buf */
-yy_size_t yyleng;
+static int yy_n_chars;		/* number of characters read into yy_ch_buf */
+int yyleng;
 
 /* Points to current character in buffer. */
 static char *yy_c_buf_p = NULL;
@@ -296,7 +295,7 @@ static void yy_init_buffer ( YY_BUFFER_STATE b, FILE *file  );
 
 YY_BUFFER_STATE yy_scan_buffer ( char *base, yy_size_t size  );
 YY_BUFFER_STATE yy_scan_string ( const char *yy_str  );
-YY_BUFFER_STATE yy_scan_bytes ( const char *bytes, yy_size_t len  );
+YY_BUFFER_STATE yy_scan_bytes ( const char *bytes, int len  );
 
 void *yyalloc ( yy_size_t  );
 void *yyrealloc ( void *, yy_size_t  );
@@ -349,7 +348,7 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
  */
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
-	yyleng = (yy_size_t) (yy_cp - yy_bp); \
+	yyleng = (int) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
@@ -540,17 +539,10 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lexer.lex"
 #line 2 "lexer.lex"
-enum TOKEN{
-	DOT=1, CONST=2, IDENT=3, EQUAL=4, NUMBER=5,
-	COMMA=6, SEMICOLON=7, VAR=8, PROCEDURE=9, ASSIGNMENT=10,
-	CALL=11, GET=12, POST=13, BEG=14, END=15, IF=16,
-	THEN=17, WHILE=18, DO=19, ODD=20, HASH=21, LESS=22,
-	LESS_EQUAL=23, GREATER=24, GREATER_EQUAL=25, PLUS=26,
-	MINUS=27, STAR=28, SLASH=29, PAREN_OPEN=30, PAREN_CLOSE=31
-};
-#line 551 "lexer.c"
+#include <token_type.h>
+#line 543 "/Volumes/GoogleDrive/Meine Ablage/Studium/Semester7/Compilerbau/Compiler/src/lexer.c"
 
-#line 553 "lexer.c"
+#line 545 "/Volumes/GoogleDrive/Meine Ablage/Studium/Semester7/Compilerbau/Compiler/src/lexer.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -590,7 +582,7 @@ FILE *yyget_out ( void );
 
 void yyset_out  ( FILE * _out_str  );
 
-			yy_size_t yyget_leng ( void );
+			int yyget_leng ( void );
 
 char *yyget_text ( void );
 
@@ -659,7 +651,7 @@ static int input ( void );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		yy_size_t n; \
+		int n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -768,9 +760,9 @@ YY_DECL
 		}
 
 	{
-#line 12 "lexer.lex"
+#line 5 "lexer.lex"
 
-#line 773 "lexer.c"
+#line 765 "/Volumes/GoogleDrive/Meine Ablage/Studium/Semester7/Compilerbau/Compiler/src/lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -829,186 +821,186 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 13 "lexer.lex"
+#line 6 "lexer.lex"
 BEGIN COMMENT;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 14 "lexer.lex"
+#line 7 "lexer.lex"
 return DOT;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 15 "lexer.lex"
+#line 8 "lexer.lex"
 return CONST;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 16 "lexer.lex"
+#line 9 "lexer.lex"
 return EQUAL;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 17 "lexer.lex"
+#line 10 "lexer.lex"
 return COMMA;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 18 "lexer.lex"
+#line 11 "lexer.lex"
 return SEMICOLON;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 19 "lexer.lex"
+#line 12 "lexer.lex"
 return VAR;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 20 "lexer.lex"
+#line 13 "lexer.lex"
 return PROCEDURE;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 21 "lexer.lex"
+#line 14 "lexer.lex"
 return ASSIGNMENT;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 22 "lexer.lex"
+#line 15 "lexer.lex"
 return CALL;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 23 "lexer.lex"
+#line 16 "lexer.lex"
 return GET;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 24 "lexer.lex"
+#line 17 "lexer.lex"
 return POST;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 25 "lexer.lex"
+#line 18 "lexer.lex"
 return BEG;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 26 "lexer.lex"
+#line 19 "lexer.lex"
 return END;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 27 "lexer.lex"
+#line 20 "lexer.lex"
 return IF;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 28 "lexer.lex"
+#line 21 "lexer.lex"
 return THEN;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 29 "lexer.lex"
+#line 22 "lexer.lex"
 return WHILE;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 30 "lexer.lex"
+#line 23 "lexer.lex"
 return DO;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 31 "lexer.lex"
+#line 24 "lexer.lex"
 return ODD;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 32 "lexer.lex"
+#line 25 "lexer.lex"
 return HASH;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 33 "lexer.lex"
+#line 26 "lexer.lex"
 return LESS;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 34 "lexer.lex"
+#line 27 "lexer.lex"
 return LESS_EQUAL;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 35 "lexer.lex"
+#line 28 "lexer.lex"
 return GREATER;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 36 "lexer.lex"
+#line 29 "lexer.lex"
 return GREATER_EQUAL;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 37 "lexer.lex"
+#line 30 "lexer.lex"
 return PLUS;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 38 "lexer.lex"
+#line 31 "lexer.lex"
 return MINUS;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 39 "lexer.lex"
+#line 32 "lexer.lex"
 return STAR;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 40 "lexer.lex"
+#line 33 "lexer.lex"
 return SLASH;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 41 "lexer.lex"
+#line 34 "lexer.lex"
 return PAREN_OPEN;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 42 "lexer.lex"
+#line 35 "lexer.lex"
 return PAREN_CLOSE;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 43 "lexer.lex"
+#line 36 "lexer.lex"
 return NUMBER;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 44 "lexer.lex"
+#line 37 "lexer.lex"
 return IDENT;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 45 "lexer.lex"
+#line 38 "lexer.lex"
 BEGIN 0;
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 46 "lexer.lex"
+#line 39 "lexer.lex"
 ;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 47 "lexer.lex"
+#line 40 "lexer.lex"
 ;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 48 "lexer.lex"
+#line 41 "lexer.lex"
 ECHO;
 	YY_BREAK
-#line 1011 "lexer.c"
+#line 1003 "/Volumes/GoogleDrive/Meine Ablage/Studium/Semester7/Compilerbau/Compiler/src/lexer.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -1196,7 +1188,7 @@ static int yy_get_next_buffer (void)
 
 	else
 		{
-			yy_size_t num_to_read =
+			int num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
@@ -1210,7 +1202,7 @@ static int yy_get_next_buffer (void)
 
 			if ( b->yy_is_our_buffer )
 				{
-				yy_size_t new_size = b->yy_buf_size * 2;
+				int new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -1268,7 +1260,7 @@ static int yy_get_next_buffer (void)
 
 	if (((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
 		/* Extend the array by 50%, plus the number we really need. */
-		yy_size_t new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
+		int new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
 		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc(
 			(void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf, (yy_size_t) new_size  );
 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
@@ -1357,7 +1349,7 @@ static int yy_get_next_buffer (void)
 	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
 		{ /* need to shift things up to make room */
 		/* +2 for EOB chars. */
-		yy_size_t number_to_move = (yy_n_chars) + 2;
+		int number_to_move = (yy_n_chars) + 2;
 		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
 					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
 		char *source =
@@ -1408,7 +1400,7 @@ static int yy_get_next_buffer (void)
 
 		else
 			{ /* need more input */
-			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
+			int offset = (int) ((yy_c_buf_p) - (yytext_ptr));
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -1777,12 +1769,12 @@ YY_BUFFER_STATE yy_scan_string (const char * yystr )
  * 
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, yy_size_t  _yybytes_len )
+YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len )
 {
 	YY_BUFFER_STATE b;
 	char *buf;
 	yy_size_t n;
-	yy_size_t i;
+	int i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
 	n = (yy_size_t) (_yybytes_len + 2);
@@ -1824,7 +1816,7 @@ static void yynoreturn yy_fatal_error (const char* msg )
 	do \
 		{ \
 		/* Undo effects of setting up yytext. */ \
-        yy_size_t yyless_macro_arg = (n); \
+        int yyless_macro_arg = (n); \
         YY_LESS_LINENO(yyless_macro_arg);\
 		yytext[yyleng] = (yy_hold_char); \
 		(yy_c_buf_p) = yytext + yyless_macro_arg; \
@@ -1864,7 +1856,7 @@ FILE *yyget_out  (void)
 /** Get the length of the current token.
  * 
  */
-yy_size_t yyget_leng  (void)
+int yyget_leng  (void)
 {
         return yyleng;
 }
@@ -2014,17 +2006,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "lexer.lex"
-
-int main(){
-	int r;
-	do{
-		r = yylex();
-		printf("%d\n", r);
-	}
-	while(r != 0);
-	return 0;
-}
+#line 41 "lexer.lex"
 
 int yywrap(){
 	return 1;
