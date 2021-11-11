@@ -1,3 +1,5 @@
+#pragma once
+
 enum token_type {
 	DOT = 1,
 	CONST = 2,
