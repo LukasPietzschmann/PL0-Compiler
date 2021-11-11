@@ -47,9 +47,11 @@ void set_error(char* message) {
 
 enum token_type get_token() { return yylex(); }
 
-bool match(enum token_type type){
-	if(current_token == type)
+bool match(enum token_type type) {
+	if(current_token == type) {
+		current_token = get_token();
 		return true;
+	}
 
 	set_error("Unexpected token\n");
 	return false;
