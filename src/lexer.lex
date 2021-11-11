@@ -42,7 +42,8 @@ unsigned int line = 1;
 <COMMENT>[^"*)"]+ ;
 <COMMENT>"\n" ++line;
 "\n" ++line;
-. ;
+[" ""\t"] ;
+. printf("Unexpected character %s at line %d\n", yytext, line);
 %%
 int yywrap(){
 	return 1;
