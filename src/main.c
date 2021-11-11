@@ -81,7 +81,7 @@ bool consume(enum token_type type) {
 
 void get() {
 	consume(GET);
-	assignment();
+	consume(IDENT);
 }
 
 void post() {
@@ -92,9 +92,8 @@ void post() {
 void begin() {
 	consume(BEG);
 	statement();
-	while(match(SEMICOLON)) {
+	while(match(SEMICOLON))
 		statement();
-	}
 	consume(END);
 }
 
@@ -107,7 +106,7 @@ void condition() {
 
 void loop() {
 	consume(WHILE);
-	condition();
+	comparison();
 	consume(DO);
 	statement();
 }
@@ -127,10 +126,9 @@ void comparison() {
 }
 
 void expression() {
-	if(current_token.type == PLUS || current_token.type == MINUS) {
+	if(current_token.type == PLUS || current_token.type == MINUS)
 		current_token = get_token();
-		term();
-	}
+	term();
 	while(current_token.type == PLUS || current_token.type == MINUS) {
 		current_token = get_token();
 		term();
@@ -149,7 +147,10 @@ void factor() {
 	switch(current_token.type) {
 		case IDENT: consume(IDENT); break;
 		case NUMBER: consume(NUMBER); break;
-		case PAREN_OPEN: expression(); consume(PAREN_CLOSE);
+		case PAREN_OPEN:
+			consume(PAREN_OPEN);
+			expression();
+			consume(PAREN_CLOSE);
 		default: set_error("Unexpected Token"); break;
 	}
 }
@@ -200,8 +201,6 @@ void statement() {
 		condition();
 	else if(current_token.type == WHILE)
 		loop();
-	else
-		set_error("No matching Statement");
 }
 
 void assignment() {
