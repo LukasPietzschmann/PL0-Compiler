@@ -32,6 +32,7 @@ const char* get_name_for_type(token_type t) {
 			"STAR",
 			"SLASH",
 			"PAREN_OPEN",
-			"PAREN_CLOSE"};
+			"PAREN_CLOSE",
+			"UNKNOWN_CHARACTER"};
 	return names[t];
 }

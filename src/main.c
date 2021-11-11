@@ -42,7 +42,8 @@ int main(int argc, char** argv) {
 	}
 	current_token = get_token();
 	program();
-	return 0;
+	has_error = has_error || !match(END_OF_FILE);
+	return has_error;
 }
 
 void set_error(char* message) {

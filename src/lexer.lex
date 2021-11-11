@@ -1,5 +1,6 @@
 %{
 #include <token.h>
+#include <token_type.h>
 unsigned int line = 1;
 
 #include <redefine_yylex.h>
@@ -43,7 +44,7 @@ unsigned int line = 1;
 <COMMENT>"\n" ++line;
 "\n" ++line;
 [" ""\t"] ;
-. printf("Unexpected character %s at line %d\n", yytext, line);
+. return (token){UNDEFINED_CHAR, line};
 %%
 int yywrap(){
 	return 1;

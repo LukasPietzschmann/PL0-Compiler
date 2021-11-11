@@ -32,7 +32,8 @@ typedef enum {
 	STAR = 28,
 	SLASH = 29,
 	PAREN_OPEN = 30,
-	PAREN_CLOSE = 31
+	PAREN_CLOSE = 31,
+	UNDEFINED_CHAR = 32
 } token_type;
 
 const char* get_name_for_type(token_type t);

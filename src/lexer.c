@@ -542,12 +542,13 @@ char *yytext;
 #line 1 "lexer.lex"
 #line 2 "lexer.lex"
 #include <token.h>
+#include <token_type.h>
 unsigned int line = 1;
 
 #include <redefine_yylex.h>
-#line 548 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#line 549 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 
-#line 550 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#line 551 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -765,9 +766,9 @@ YY_DECL
 		}
 
 	{
-#line 8 "lexer.lex"
+#line 9 "lexer.lex"
 
-#line 770 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#line 771 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -826,203 +827,203 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 9 "lexer.lex"
+#line 10 "lexer.lex"
 BEGIN COMMENT;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 10 "lexer.lex"
+#line 11 "lexer.lex"
 return (token){DOT, line};
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 11 "lexer.lex"
+#line 12 "lexer.lex"
 return (token){CONST, line};
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 12 "lexer.lex"
+#line 13 "lexer.lex"
 return (token){EQUAL, line};
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 13 "lexer.lex"
+#line 14 "lexer.lex"
 return (token){COMMA, line};
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 14 "lexer.lex"
+#line 15 "lexer.lex"
 return (token){SEMICOLON, line};
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 15 "lexer.lex"
+#line 16 "lexer.lex"
 return (token){VAR, line};
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 16 "lexer.lex"
+#line 17 "lexer.lex"
 return (token){PROCEDURE, line};
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 17 "lexer.lex"
+#line 18 "lexer.lex"
 return (token){ASSIGNMENT, line};
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 18 "lexer.lex"
+#line 19 "lexer.lex"
 return (token){CALL, line};
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 19 "lexer.lex"
+#line 20 "lexer.lex"
 return (token){GET, line};
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 20 "lexer.lex"
+#line 21 "lexer.lex"
 return (token){POST, line};
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 21 "lexer.lex"
+#line 22 "lexer.lex"
 return (token){BEG, line};
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 22 "lexer.lex"
+#line 23 "lexer.lex"
 return (token){END, line};
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 23 "lexer.lex"
+#line 24 "lexer.lex"
 return (token){IF, line};
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 24 "lexer.lex"
+#line 25 "lexer.lex"
 return (token){THEN, line};
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 25 "lexer.lex"
+#line 26 "lexer.lex"
 return (token){WHILE, line};
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 26 "lexer.lex"
+#line 27 "lexer.lex"
 return (token){DO, line};
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 27 "lexer.lex"
+#line 28 "lexer.lex"
 return (token){ODD, line};
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 28 "lexer.lex"
+#line 29 "lexer.lex"
 return (token){HASH, line};
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 29 "lexer.lex"
+#line 30 "lexer.lex"
 return (token){LESS, line};
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 30 "lexer.lex"
+#line 31 "lexer.lex"
 return (token){LESS_EQUAL, line};
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 31 "lexer.lex"
+#line 32 "lexer.lex"
 return (token){GREATER, line};
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 32 "lexer.lex"
+#line 33 "lexer.lex"
 return (token){GREATER_EQUAL, line};
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 33 "lexer.lex"
+#line 34 "lexer.lex"
 return (token){PLUS, line};
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 34 "lexer.lex"
+#line 35 "lexer.lex"
 return (token){MINUS, line};
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 35 "lexer.lex"
+#line 36 "lexer.lex"
 return (token){STAR, line};
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 36 "lexer.lex"
+#line 37 "lexer.lex"
 return (token){SLASH, line};
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 37 "lexer.lex"
+#line 38 "lexer.lex"
 return (token){PAREN_OPEN, line};
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 38 "lexer.lex"
+#line 39 "lexer.lex"
 return (token){PAREN_CLOSE, line};
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 39 "lexer.lex"
+#line 40 "lexer.lex"
 return (token){NUMBER, line};
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 40 "lexer.lex"
+#line 41 "lexer.lex"
 return (token){IDENT, line};
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 41 "lexer.lex"
+#line 42 "lexer.lex"
 BEGIN 0;
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 42 "lexer.lex"
+#line 43 "lexer.lex"
 ;
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 43 "lexer.lex"
+#line 44 "lexer.lex"
 ++line;
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 44 "lexer.lex"
+#line 45 "lexer.lex"
 ++line;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 45 "lexer.lex"
+#line 46 "lexer.lex"
 ;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 46 "lexer.lex"
-printf("Unexpected character %s at line %d\n", yytext, line);
+#line 47 "lexer.lex"
+return (token){UNDEFINED_CHAR, line};
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 47 "lexer.lex"
+#line 48 "lexer.lex"
 ECHO;
 	YY_BREAK
-#line 1025 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#line 1026 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -2028,7 +2029,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 47 "lexer.lex"
+#line 48 "lexer.lex"
 
 int yywrap(){
 	return 1;

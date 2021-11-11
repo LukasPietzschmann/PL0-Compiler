@@ -468,7 +468,7 @@ extern int yylex (void);
 #undef yyTABLES_NAME
 #endif
 
-#line 47 "lexer.lex"
+#line 48 "lexer.lex"
 
 
 #line 474 "/Users/luke/Desktop/PL0-Compiler/src/lexer.h"
