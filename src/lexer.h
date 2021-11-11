@@ -38,7 +38,7 @@
 #if defined (__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
 
 /* C99 says to define __STDC_LIMIT_MACROS before including stdint.h,
- * if you want the limit (max/min) macros for int types.
+ * if you want the limit (max/min) macros for int types. 
  */
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS 1
@@ -56,7 +56,7 @@ typedef uint64_t flex_uint64_t;
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
 typedef int flex_int32_t;
-typedef unsigned char flex_uint8_t;
+typedef unsigned char flex_uint8_t; 
 typedef unsigned short int flex_uint16_t;
 typedef unsigned int flex_uint32_t;
 
@@ -471,10 +471,6 @@ extern int yylex (void);
 #line 46 "lexer.lex"
 
 
-<<<<<<< Updated upstream
 #line 474 "/Users/luke/Desktop/PL0-Compiler/src/lexer.h"
-=======
-#line 474 "/mnt/d/Studiums_Stuff/Semester_7/Compilerbau/Projekt/PL0-Compiler/src/lexer.h"
->>>>>>> Stashed changes
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

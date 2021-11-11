@@ -36,7 +36,13 @@ void expression();
 void term();
 void factor();
 
-int main() {
+int main(int argc, char** argv) {
+	if(argc > 1) {
+		FILE* input = fopen(*(argv + 1), "r");
+		if(!input)
+			return -1;
+		yyin = input;
+	}
 	current_token = get_token();
 	program();
 	return 0;
