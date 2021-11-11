@@ -3,8 +3,8 @@ PROCEDURE ggt;
 BEGIN
 	WHILE a # b DO
 	BEGIN
-		IF a > b THEN a := a − b;
-		IF b > a THEN b := b − a;
+		IF a > b THEN a := a - b;
+		IF b > a THEN b := b - a;
 	END ;
 	g := a;
 END ; (* HAUPTPROGRAMM *)
