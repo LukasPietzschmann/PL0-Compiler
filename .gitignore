@@ -1,3 +1,6 @@
 *.out
 *.o
 Debug/
+.idea/
+.vscode/
+cmake-build*/
