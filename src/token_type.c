@@ -1,0 +1,37 @@
+#include <token_type.h>
+
+const char* get_name_for_type(enum token_type t) {
+	const char* names[] = {"EOF",
+			"DOT",
+			"CONST",
+			"IDENT",
+			"EQUAL",
+			"NUMBER",
+			"COMMA",
+			"SEMICOLON",
+			"VAR",
+			"PROCEDURE",
+			"ASSIGNMENT",
+			"CALL",
+			"GET",
+			"POST",
+			"BEG",
+			"END",
+			"IF",
+			"THEN",
+			"WHILE",
+			"DO",
+			"ODD",
+			"HASH",
+			"LESS",
+			"LESS",
+			"GREATER",
+			"GREATER",
+			"PLUS",
+			"MINUS",
+			"STAR",
+			"SLASH",
+			"PAREN_OPEN",
+			"PAREN_CLOSE"};
+	return names[t];
+}
