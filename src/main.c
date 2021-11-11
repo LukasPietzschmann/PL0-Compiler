@@ -8,6 +8,8 @@ bool has_error;
 void set_error(char* message);
 enum token_type get_token();
 
+bool match(enum token_type type);
+
 void program();
 
 void block();
@@ -44,3 +46,12 @@ void set_error(char* message) {
 }
 
 enum token_type get_token() { return yylex(); }
+
+bool match(enum token_type type){
+	if(current_token == type)
+		return true;
+
+	set_error("Unexpected token\n");
+	return false;
+}
+
