@@ -1,5 +1,4 @@
 #include <redefine_yylex.h>
-
 #include <lexer.h>
 #include <stdbool.h>
 #include <token.h>
@@ -14,6 +13,7 @@ void set_error(char* message);
 struct token get_token();
 
 bool match(enum token_type type);
+bool consume(enum token_type type);
 
 void program();
 
@@ -56,6 +56,12 @@ bool match(enum token_type type) {
 		current_token = get_token();
 		return true;
 	}
+	return false;
+}
+
+bool consume(enum token_type type) {
+	if(match(type))
+		return true;
 
 	char error_msg[60];
 	sprintf(error_msg,
@@ -68,35 +74,35 @@ bool match(enum token_type type) {
 }
 
 void get() {
-	match(GET);
+	consume(GET);
 	assignment();
 }
 
 void post() {
-	match(POST);
+	consume(POST);
 	expression();
 }
 
 void begin() {
-	match(BEG);
+	consume(BEG);
 	statement();
 	while(match(SEMICOLON)) {
 		statement();
 	}
-	match(END);
+	consume(END);
 }
 
 void condition() {
-	match(IF);
+	consume(IF);
 	comparison();
-	match(THEN);
+	consume(THEN);
 	statement();
 }
 
 void loop() {
-	match(WHILE);
+	consume(WHILE);
 	condition();
-	match(DO);
+	consume(DO);
 	statement();
 }
 
@@ -135,40 +141,40 @@ void term() {
 
 void factor() {
 	switch(current_token.type) {
-		case IDENT: match(IDENT); break;
-		case NUMBER: match(NUMBER); break;
-		case PAREN_OPEN: expression(); match(PAREN_CLOSE);
+		case IDENT: consume(IDENT); break;
+		case NUMBER: consume(NUMBER); break;
+		case PAREN_OPEN: expression(); consume(PAREN_CLOSE);
 		default: set_error("Unexpected Token"); break;
 	}
 }
 void program() {
 	block();
-	match(DOT);
+	consume(DOT);
 }
 
 void block() {
 	if(match(CONST)) {
-		match(IDENT);
-		match(EQUAL);
-		match(NUMBER);
+		consume(IDENT);
+		consume(EQUAL);
+		consume(NUMBER);
 		while(match(COMMA)) {
-			match(IDENT);
-			match(EQUAL);
-			match(NUMBER);
+			consume(IDENT);
+			consume(EQUAL);
+			consume(NUMBER);
 		}
-		match(SEMICOLON);
+		consume(SEMICOLON);
 	}
 	if(match(VAR)) {
-		match(IDENT);
+		consume(IDENT);
 		while(match(COMMA))
-			match(IDENT);
-		match(SEMICOLON);
+			consume(IDENT);
+		consume(SEMICOLON);
 	}
 	while(match(PROCEDURE)) {
-		match(IDENT);
-		match(SEMICOLON);
+		consume(IDENT);
+		consume(SEMICOLON);
 		block();
-		match(SEMICOLON);
+		consume(SEMICOLON);
 	}
 	statement();
 }
@@ -193,12 +199,12 @@ void statement() {
 }
 
 void assignment() {
-	match(IDENT);
-	match(ASSIGNMENT);
+	consume(IDENT);
+	consume(ASSIGNMENT);
 	expression();
 }
 
 void call() {
-	match(CALL);
-	match(IDENT);
+	consume(CALL);
+	consume(IDENT);
 }
