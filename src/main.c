@@ -1,5 +1,6 @@
 #include <redefine_yylex.h>
 #include <lexer.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <token.h>
 #include <token_type.h>
@@ -12,8 +13,10 @@ bool has_error;
 void set_error(char* message);
 token get_token();
 
-bool match(token_type type);
-bool consume(token_type type);
+bool inline match(token_type type);
+bool match_one_of(int argc, ...);
+bool inline consume(token_type type);
+bool consume_one_of(int argc, ...);
 
 void program();
 
@@ -150,37 +153,28 @@ void comparison() {
 		expression();
 	else {
 		expression();
-		if(current_token.type == EQUAL || current_token.type == HASH || current_token.type == LESS ||
-				current_token.type == LESS_EQUAL || current_token.type == GREATER ||
-				current_token.type == GREATER_EQUAL) {
-			current_token = get_token();
+		if(match_one_of(6, EQUAL, HASH, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL))
 			expression();
-		}
 	}
 }
 
 void expression() {
-	if(current_token.type == PLUS || current_token.type == MINUS)
-		current_token = get_token();
+	match_one_of(2, PLUS, MINUS);
 	term();
-	while(current_token.type == PLUS || current_token.type == MINUS) {
-		current_token = get_token();
+	while(match_one_of(2, PLUS, MINUS))
 		term();
-	}
 }
 
 void term() {
 	factor();
-	while(current_token.type == STAR || current_token.type == SLASH) {
-		current_token = get_token();
+	while(match_one_of(2, STAR, SLASH))
 		factor();
-	}
 }
 
 void factor() {
 	switch(current_token.type) {
-		case IDENT: consume(IDENT); break;
-		case NUMBER: consume(NUMBER); break;
+		case IDENT:
+		case NUMBER: consume_one_of(2, NUMBER, IDENT); break;
 		case PAREN_OPEN:
 			consume(PAREN_OPEN);
 			expression();
@@ -189,24 +183,55 @@ void factor() {
 	}
 }
 
-bool match(token_type type) {
-	if(current_token.type == type) {
+bool inline match(token_type type) { return match_one_of(1, type); }
+
+bool match_one_of(int argc, ...) {
+	va_list args;
+	va_start(args, argc);
+
+	for(int i = 0; i < argc; ++i) {
+		if(current_token.type != va_arg(args, token_type))
+			continue;
 		current_token = get_token();
+		va_end(args);
 		return true;
 	}
+	va_end(args);
 	return false;
 }
 
-bool consume(token_type type) {
-	if(match(type))
-		return true;
+bool inline consume(token_type type) { return consume_one_of(1, type); }
 
-	char error_msg[60];
+bool consume_one_of(int argc, ...) {
+	va_list args;
+	va_start(args, argc);
+
+	for(int i = 0; i < argc; ++i) {
+		if(current_token.type != va_arg(args, token_type))
+			continue;
+		current_token = get_token();
+		va_end(args);
+		return true;
+	}
+
+	char* token_names = (char*)malloc(sizeof(char) * 10 * argc);
+	va_start(args, argc);
+	for(int i = 0; i < argc; ++i) {
+		strcat(token_names, get_name_for_type(va_arg(args, token_type)));
+		strncat(token_names, ", or ", 5);
+	}
+	token_names[strlen(token_names) - 5] = '\0';
+
+	char* error_msg = (char*)malloc(sizeof(char) * (40 + 10 + strlen(token_names)));
 	sprintf(error_msg,
-			"[line %d] Expected token %s but got %s",
+			"[line %d] Expected token %s, but got %s",
 			current_token.line_number,
-			get_name_for_type(type),
+			token_names,
 			get_name_for_type(current_token.type));
 	set_error(error_msg);
+
+	free(token_names);
+	free(error_msg);
+	va_end(args);
 	return false;
 }
