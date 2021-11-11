@@ -70,7 +70,7 @@ void post() {
 void begin() {
 	match(BEG);
 	statement();
-	while(match(SEMICOLON)){
+	while(match(SEMICOLON)) {
 		statement();
 	}
 	match(END);
@@ -83,7 +83,7 @@ void condition() {
 	statement();
 }
 
-void loop(){
+void loop() {
 	match(WHILE);
 	condition();
 	match(DO);
@@ -129,4 +129,65 @@ void factor() {
 		case PAREN_OPEN: expression(); match(PAREN_CLOSE);
 		default: set_error("Unexpected Token"); break;
 	}
+}
+void program() {
+	block();
+	match(DOT);
+}
+
+void block() {
+	if(match(CONST)) {
+		match(IDENT);
+		match(EQUAL);
+		match(NUMBER);
+		while(match(COMMA)) {
+			match(IDENT);
+			match(EQUAL);
+			match(NUMBER);
+		}
+		match(SEMICOLON);
+	}
+	if(match(VAR)) {
+		match(IDENT);
+		while(match(COMMA))
+			match(IDENT);
+		match(SEMICOLON);
+	}
+	while(match(PROCEDURE)) {
+		match(IDENT);
+		match(SEMICOLON);
+		block();
+		match(SEMICOLON);
+	}
+	statement();
+}
+
+void statement() {
+	if(current_token == IDENT)
+		assignment();
+	else if(current_token == CALL)
+		call();
+	else if(current_token == GET)
+		get();
+	else if(current_token == POST)
+		post();
+	else if(current_token == BEG)
+		begin();
+	else if(current_token == IF)
+		condition();
+	else if(current_token == WHILE)
+		loop();
+	else
+		set_error("No matching Statement");
+}
+
+void assignment() {
+	match(IDENT);
+	match(ASSIGNMENT);
+	expression();
+}
+
+void call() {
+	match(CALL);
+	match(IDENT);
 }
