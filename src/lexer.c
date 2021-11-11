@@ -353,8 +353,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 36
-#define YY_END_OF_BUFFER 37
+#define YY_NUM_RULES 38
+#define YY_END_OF_BUFFER 39
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -364,8 +364,8 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[147] =
     {   0,
-        0,    0,    0,    0,   37,   35,   36,   12,   20,   29,
-       30,   27,   25,    5,   26,    2,   28,   31,   35,    6,
+        0,    0,    0,    0,   39,   37,   36,   12,   20,   29,
+       30,   27,   25,    5,   26,    2,   28,   31,   37,    6,
        21,    4,   23,   11,   32,   32,   32,   32,   32,   32,
        32,   32,   32,   32,   32,   34,   34,   12,   20,   29,
        27,   25,    5,   26,    2,   28,   31,   34,    6,   21,
@@ -540,10 +540,13 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "lexer.lex"
 #line 2 "lexer.lex"
-#include <token_type.h>
-#line 544 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#include <token.h>
+unsigned int line = 1;
 
-#line 546 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#include <redefine_yylex.h>
+#line 547 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+
+#line 549 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -761,9 +764,9 @@ YY_DECL
 		}
 
 	{
-#line 5 "lexer.lex"
+#line 8 "lexer.lex"
 
-#line 766 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#line 769 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -822,186 +825,198 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 6 "lexer.lex"
+#line 9 "lexer.lex"
 BEGIN COMMENT;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 7 "lexer.lex"
-return DOT;
+#line 10 "lexer.lex"
+return (struct token){DOT, line};
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 8 "lexer.lex"
-return CONST;
+#line 11 "lexer.lex"
+return (struct token){CONST, line};
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 9 "lexer.lex"
-return EQUAL;
+#line 12 "lexer.lex"
+return (struct token){EQUAL, line};
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 10 "lexer.lex"
-return COMMA;
+#line 13 "lexer.lex"
+return (struct token){COMMA, line};
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 11 "lexer.lex"
-return SEMICOLON;
+#line 14 "lexer.lex"
+return (struct token){SEMICOLON, line};
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 12 "lexer.lex"
-return VAR;
+#line 15 "lexer.lex"
+return (struct token){VAR, line};
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 13 "lexer.lex"
-return PROCEDURE;
+#line 16 "lexer.lex"
+return (struct token){PROCEDURE, line};
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 14 "lexer.lex"
-return ASSIGNMENT;
+#line 17 "lexer.lex"
+return (struct token){ASSIGNMENT, line};
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 15 "lexer.lex"
-return CALL;
+#line 18 "lexer.lex"
+return (struct token){CALL, line};
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 16 "lexer.lex"
-return GET;
+#line 19 "lexer.lex"
+return (struct token){GET, line};
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 17 "lexer.lex"
-return POST;
+#line 20 "lexer.lex"
+return (struct token){POST, line};
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 18 "lexer.lex"
-return BEG;
+#line 21 "lexer.lex"
+return (struct token){BEG, line};
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 19 "lexer.lex"
-return END;
+#line 22 "lexer.lex"
+return (struct token){END, line};
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 20 "lexer.lex"
-return IF;
+#line 23 "lexer.lex"
+return (struct token){IF, line};
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 21 "lexer.lex"
-return THEN;
+#line 24 "lexer.lex"
+return (struct token){THEN, line};
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 22 "lexer.lex"
-return WHILE;
+#line 25 "lexer.lex"
+return (struct token){WHILE, line};
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 23 "lexer.lex"
-return DO;
+#line 26 "lexer.lex"
+return (struct token){DO, line};
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 24 "lexer.lex"
-return ODD;
+#line 27 "lexer.lex"
+return (struct token){ODD, line};
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 25 "lexer.lex"
-return HASH;
+#line 28 "lexer.lex"
+return (struct token){HASH, line};
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 26 "lexer.lex"
-return LESS;
+#line 29 "lexer.lex"
+return (struct token){LESS, line};
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 27 "lexer.lex"
-return LESS_EQUAL;
+#line 30 "lexer.lex"
+return (struct token){LESS_EQUAL, line};
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 28 "lexer.lex"
-return GREATER;
+#line 31 "lexer.lex"
+return (struct token){GREATER, line};
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 29 "lexer.lex"
-return GREATER_EQUAL;
+#line 32 "lexer.lex"
+return (struct token){GREATER_EQUAL, line};
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 30 "lexer.lex"
-return PLUS;
+#line 33 "lexer.lex"
+return (struct token){PLUS, line};
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 31 "lexer.lex"
-return MINUS;
+#line 34 "lexer.lex"
+return (struct token){MINUS, line};
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 32 "lexer.lex"
-return STAR;
+#line 35 "lexer.lex"
+return (struct token){STAR, line};
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 33 "lexer.lex"
-return SLASH;
+#line 36 "lexer.lex"
+return (struct token){SLASH, line};
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 34 "lexer.lex"
-return PAREN_OPEN;
+#line 37 "lexer.lex"
+return (struct token){PAREN_OPEN, line};
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 35 "lexer.lex"
-return PAREN_CLOSE;
+#line 38 "lexer.lex"
+return (struct token){PAREN_CLOSE, line};
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 36 "lexer.lex"
-return NUMBER;
+#line 39 "lexer.lex"
+return (struct token){NUMBER, line};
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 37 "lexer.lex"
-return IDENT;
+#line 40 "lexer.lex"
+return (struct token){IDENT, line};
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 38 "lexer.lex"
+#line 41 "lexer.lex"
 BEGIN 0;
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 39 "lexer.lex"
+#line 42 "lexer.lex"
 ;
 	YY_BREAK
 case 35:
+/* rule 35 can match eol */
 YY_RULE_SETUP
-#line 40 "lexer.lex"
-;
+#line 43 "lexer.lex"
+++line;
 	YY_BREAK
 case 36:
+/* rule 36 can match eol */
 YY_RULE_SETUP
-#line 41 "lexer.lex"
+#line 44 "lexer.lex"
+++line;
+	YY_BREAK
+case 37:
+YY_RULE_SETUP
+#line 45 "lexer.lex"
+;
+	YY_BREAK
+case 38:
+YY_RULE_SETUP
+#line 46 "lexer.lex"
 ECHO;
 	YY_BREAK
-#line 1004 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
+#line 1019 "/Users/luke/Desktop/PL0-Compiler/src/lexer.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -2007,7 +2022,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 41 "lexer.lex"
+#line 46 "lexer.lex"
 
 int yywrap(){
 	return 1;
