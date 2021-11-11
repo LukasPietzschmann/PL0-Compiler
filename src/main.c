@@ -18,9 +18,6 @@ bool consume(token_type type);
 void program();
 
 void block();
-void const_declaration();
-void var_decalaration();
-void procedure();
 
 void statement();
 void assignment();
@@ -53,30 +50,66 @@ void set_error(char* message) {
 	printf("%s\n", message);
 }
 
-token get_token() {
-	return yylex();
+token get_token() { return yylex(); }
+
+void program() {
+	block();
+	consume(DOT);
 }
 
-bool match(token_type type) {
-	if(current_token.type == type) {
-		current_token = get_token();
-		return true;
+void block() {
+	if(match(CONST)) {
+		consume(IDENT);
+		consume(EQUAL);
+		consume(NUMBER);
+		while(match(COMMA)) {
+			consume(IDENT);
+			consume(EQUAL);
+			consume(NUMBER);
+		}
+		consume(SEMICOLON);
 	}
-	return false;
+	if(match(VAR)) {
+		consume(IDENT);
+		while(match(COMMA))
+			consume(IDENT);
+		consume(SEMICOLON);
+	}
+	while(match(PROCEDURE)) {
+		consume(IDENT);
+		consume(SEMICOLON);
+		block();
+		consume(SEMICOLON);
+	}
+	statement();
 }
 
-bool consume(token_type type) {
-	if(match(type))
-		return true;
+void statement() {
+	if(current_token.type == IDENT)
+		assignment();
+	else if(current_token.type == CALL)
+		call();
+	else if(current_token.type == GET)
+		get();
+	else if(current_token.type == POST)
+		post();
+	else if(current_token.type == BEG)
+		begin();
+	else if(current_token.type == IF)
+		condition();
+	else if(current_token.type == WHILE)
+		loop();
+}
 
-	char error_msg[60];
-	sprintf(error_msg,
-			"[line %d] Expected token %s but got %s",
-			current_token.line_number,
-			get_name_for_type(type),
-			get_name_for_type(current_token.type));
-	set_error(error_msg);
-	return false;
+void assignment() {
+	consume(IDENT);
+	consume(ASSIGNMENT);
+	expression();
+}
+
+void call() {
+	consume(CALL);
+	consume(IDENT);
 }
 
 void get() {
@@ -154,62 +187,25 @@ void factor() {
 		default: set_error("Unexpected Token"); break;
 	}
 }
-void program() {
-	block();
-	consume(DOT);
-}
 
-void block() {
-	if(match(CONST)) {
-		consume(IDENT);
-		consume(EQUAL);
-		consume(NUMBER);
-		while(match(COMMA)) {
-			consume(IDENT);
-			consume(EQUAL);
-			consume(NUMBER);
-		}
-		consume(SEMICOLON);
+bool match(token_type type) {
+	if(current_token.type == type) {
+		current_token = get_token();
+		return true;
 	}
-	if(match(VAR)) {
-		consume(IDENT);
-		while(match(COMMA))
-			consume(IDENT);
-		consume(SEMICOLON);
-	}
-	while(match(PROCEDURE)) {
-		consume(IDENT);
-		consume(SEMICOLON);
-		block();
-		consume(SEMICOLON);
-	}
-	statement();
+	return false;
 }
 
-void statement() {
-	if(current_token.type == IDENT)
-		assignment();
-	else if(current_token.type == CALL)
-		call();
-	else if(current_token.type == GET)
-		get();
-	else if(current_token.type == POST)
-		post();
-	else if(current_token.type == BEG)
-		begin();
-	else if(current_token.type == IF)
-		condition();
-	else if(current_token.type == WHILE)
-		loop();
-}
+bool consume(token_type type) {
+	if(match(type))
+		return true;
 
-void assignment() {
-	consume(IDENT);
-	consume(ASSIGNMENT);
-	expression();
-}
-
-void call() {
-	consume(CALL);
-	consume(IDENT);
+	char error_msg[60];
+	sprintf(error_msg,
+			"[line %d] Expected token %s but got %s",
+			current_token.line_number,
+			get_name_for_type(type),
+			get_name_for_type(current_token.type));
+	set_error(error_msg);
+	return false;
 }
