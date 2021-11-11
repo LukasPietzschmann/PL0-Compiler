@@ -8,6 +8,27 @@ bool has_error;
 void set_error(char* message);
 enum token_type get_token();
 
+void program();
+
+void block();
+void const_declaration();
+void var_decalaration();
+void procedure();
+
+void statement();
+void assignment();
+void call();
+void get();
+void post();
+void begin();
+void condition();
+void loop();
+
+void comparison();
+void expression();
+void term();
+void factor();
+
 int main() {
 	int r;
 	do {
