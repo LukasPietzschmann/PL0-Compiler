@@ -1,6 +1,6 @@
 #include <token_type.h>
 
-const char* get_name_for_type(enum token_type t) {
+const char* get_name_for_type(token_type t) {
 	const char* names[] = {"EOF",
 			"DOT",
 			"CONST",

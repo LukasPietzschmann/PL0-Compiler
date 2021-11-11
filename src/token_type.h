@@ -1,6 +1,6 @@
 #pragma once
 
-enum token_type {
+typedef enum {
 	END_OF_FILE = 100,
 	DOT = 1,
 	CONST = 2,
@@ -33,6 +33,6 @@ enum token_type {
 	SLASH = 29,
 	PAREN_OPEN = 30,
 	PAREN_CLOSE = 31
-};
+} token_type;
 
-const char* get_name_for_type(enum token_type t);
+const char* get_name_for_type(token_type t);

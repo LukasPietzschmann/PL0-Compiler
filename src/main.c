@@ -6,14 +6,14 @@
 
 YY_DECL;
 
-struct token current_token;
+token current_token;
 bool has_error;
 
 void set_error(char* message);
-struct token get_token();
+token get_token();
 
-bool match(enum token_type type);
-bool consume(enum token_type type);
+bool match(token_type type);
+bool consume(token_type type);
 
 void program();
 
@@ -53,11 +53,11 @@ void set_error(char* message) {
 	printf("%s\n", message);
 }
 
-struct token get_token() {
+token get_token() {
 	return yylex();
 }
 
-bool match(enum token_type type) {
+bool match(token_type type) {
 	if(current_token.type == type) {
 		current_token = get_token();
 		return true;
@@ -65,7 +65,7 @@ bool match(enum token_type type) {
 	return false;
 }
 
-bool consume(enum token_type type) {
+bool consume(token_type type) {
 	if(match(type))
 		return true;
 

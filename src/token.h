@@ -2,7 +2,7 @@
 
 #include <token_type.h>
 
-struct token {
-	enum token_type type;
+typedef struct {
+	token_type type;
 	unsigned int line_number;
-};
+} token;
