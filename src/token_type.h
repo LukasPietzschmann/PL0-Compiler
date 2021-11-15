@@ -1,7 +1,7 @@
 #pragma once
 
 typedef enum {
-	END_OF_FILE = 100,
+	END_OF_FILE = 0,
 	DOT = 1,
 	CONST = 2,
 	IDENT = 3,

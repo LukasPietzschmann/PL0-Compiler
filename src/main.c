@@ -13,9 +13,9 @@ bool has_error;
 void set_error(char* message);
 token get_token();
 
-bool inline match(token_type type);
+bool match(token_type type);
 bool match_one_of(int argc, ...);
-bool inline consume(token_type type);
+bool consume(token_type type);
 bool consume_one_of(int argc, ...);
 
 void program();
