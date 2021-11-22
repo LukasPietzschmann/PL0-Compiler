@@ -10,7 +10,7 @@ bool parse() {
 
 void set_error(char* message) {
 	has_error = true;
-	printf("%s\n", message);
+	printf("[Line %d] %s\n", current_token.line_number, message);
 }
 
 token get_token() { return yylex(); }
@@ -181,12 +181,8 @@ bool consume_one_of(int argc, ...) {
 	}
 	token_names[strlen(token_names) - 5] = '\0';
 
-	char* error_msg = (char*)malloc(sizeof(char) * (40 + 10 + strlen(token_names)));
-	sprintf(error_msg,
-			"[line %d] Expected token %s, but got %s",
-			current_token.line_number,
-			token_names,
-			get_name_for_type(current_token.type));
+	char* error_msg = (char*)malloc(sizeof(char) * (30 + strlen(token_names) + 10));
+	sprintf(error_msg, "Expected token %s, but got %s", token_names, get_name_for_type(current_token.type));
 	set_error(error_msg);
 
 	free(token_names);
