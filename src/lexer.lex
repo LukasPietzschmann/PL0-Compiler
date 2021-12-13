@@ -1,9 +1,8 @@
 %{
-#include <token.h>
-#include <token_type.h>
+#include "redefine_yylex.hpp"
+#include "token.hpp"
+#include "token_type.hpp"
 unsigned int line = 1;
-
-#include <redefine_yylex.h>
 %}
 %start COMMENT
 %%

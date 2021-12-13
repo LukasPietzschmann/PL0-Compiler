@@ -1,3 +1,4 @@
+#include "token.hpp"
 #undef YY_DECL
 #undef YY_NULL
 #define YY_DECL token yylex(void)

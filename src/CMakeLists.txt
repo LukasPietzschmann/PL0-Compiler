@@ -1,6 +1,6 @@
 cmake_policy(SET CMP0098 OLD)
 find_package(FLEX)
-FLEX_TARGET(lexer lexer.lex lexer.c DEFINES_FILE lexer.h)
+FLEX_TARGET(lexer lexer.lex lexer.cpp DEFINES_FILE lexer.hpp)
 
-add_executable(main main.c redefine_yylex.h parser.h parser.c token.h token_type.h token_type.c ${FLEX_lexer_OUTPUTS})
-target_link_libraries(main ${FLEX_LIBRARIES})
+add_executable(main ${FLEX_lexer_OUTPUTS} main.cpp parser.cpp token_type.cpp)
+target_link_libraries(main PUBLIC ${FLEX_LIBRARIES})

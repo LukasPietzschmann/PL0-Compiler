@@ -2,9 +2,9 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 5 "/Users/luke/Desktop/PL0-Compiler/src/lexer.h"
+#line 5 "/Users/luke/Desktop/PL0-Compiler/src/lexer.hpp"
 
-#line 7 "/Users/luke/Desktop/PL0-Compiler/src/lexer.h"
+#line 7 "/Users/luke/Desktop/PL0-Compiler/src/lexer.hpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -468,9 +468,9 @@ extern int yylex (void);
 #undef yyTABLES_NAME
 #endif
 
-#line 48 "lexer.lex"
+#line 47 "lexer.lex"
 
 
-#line 474 "/Users/luke/Desktop/PL0-Compiler/src/lexer.h"
+#line 474 "/Users/luke/Desktop/PL0-Compiler/src/lexer.hpp"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

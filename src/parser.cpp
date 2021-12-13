@@ -1,4 +1,7 @@
-#include <parser.h>
+#include "parser.hpp"
+
+token current_token;
+bool has_error;
 
 bool parse() {
 	current_token = get_token();
@@ -8,9 +11,9 @@ bool parse() {
 	return has_error;
 }
 
-void set_error(char* message) {
+void set_error(std::string_view message) {
 	has_error = true;
-	printf("[Line %d] %s\n", current_token.line_number, message);
+	std::cout << "[Line " << current_token.line_number << "] " << message << std::endl;
 }
 
 token get_token() { return yylex(); }
@@ -112,28 +115,28 @@ void comparison() {
 		expression();
 	else {
 		expression();
-		if(match_one_of(6, EQUAL, HASH, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL))
+		if(match(EQUAL, HASH, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL))
 			expression();
 	}
 }
 
 void expression() {
-	match_one_of(2, PLUS, MINUS);
+	match(PLUS, MINUS);
 	term();
-	while(match_one_of(2, PLUS, MINUS))
+	while(match(PLUS, MINUS))
 		term();
 }
 
 void term() {
 	factor();
-	while(match_one_of(2, STAR, SLASH))
+	while(match(STAR, SLASH))
 		factor();
 }
 
 void factor() {
 	switch(current_token.type) {
 		case IDENT:
-		case NUMBER: consume_one_of(2, NUMBER, IDENT); break;
+		case NUMBER: consume(NUMBER, IDENT); break;
 		case PAREN_OPEN:
 			consume(PAREN_OPEN);
 			expression();
@@ -142,51 +145,35 @@ void factor() {
 	}
 }
 
-bool inline match(token_type type) { return match_one_of(1, type); }
-
-bool match_one_of(int argc, ...) {
-	va_list args;
-	va_start(args, argc);
-
-	for(int i = 0; i < argc; ++i) {
-		if(current_token.type != va_arg(args, token_type))
+template <typename... Args>
+bool match(Args... types) {
+	for(const auto& type : {types...}) {
+		if(current_token.type != type)
 			continue;
 		current_token = get_token();
-		va_end(args);
 		return true;
 	}
-	va_end(args);
 	return false;
 }
 
-bool inline consume(token_type type) { return consume_one_of(1, type); }
-
-bool consume_one_of(int argc, ...) {
-	va_list args;
-	va_start(args, argc);
-
-	for(int i = 0; i < argc; ++i) {
-		if(current_token.type != va_arg(args, token_type))
+template <typename... Args>
+bool consume(Args... types) {
+	for(const auto& type : {types...}) {
+		if(current_token.type != type)
 			continue;
 		current_token = get_token();
-		va_end(args);
 		return true;
 	}
 
-	char* token_names = (char*)malloc(sizeof(char) * 10 * argc);
-	va_start(args, argc);
-	for(int i = 0; i < argc; ++i) {
-		strcat(token_names, get_name_for_type(va_arg(args, token_type)));
-		strncat(token_names, ", or ", 5);
+	std::string token_names;
+	for(const auto& type : {types...}) {
+		token_names += get_name_for_type(type);
+		token_names += ", or";
 	}
-	token_names[strlen(token_names) - 5] = '\0';
+	token_names = token_names.substr(token_names.size() - 6, 5);
 
-	char* error_msg = (char*)malloc(sizeof(char) * (30 + strlen(token_names) + 10));
-	sprintf(error_msg, "Expected token %s, but got %s", token_names, get_name_for_type(current_token.type));
+	std::string error_msg = "Expected token " + token_names + ", but got " + get_name_for_type(current_token.type);
 	set_error(error_msg);
 
-	free(token_names);
-	free(error_msg);
-	va_end(args);
 	return false;
 }

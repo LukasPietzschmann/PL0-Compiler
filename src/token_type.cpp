@@ -1,7 +1,7 @@
-#include <token_type.h>
+#include "token_type.hpp"
 
-const char* get_name_for_type(token_type t) {
-	const char* names[] = {"EOF",
+std::string get_name_for_type(token_type t) {
+	const std::string names[] = {"EOF",
 			"DOT",
 			"CONST",
 			"IDENT",

@@ -1,7 +1,5 @@
-#include <redefine_yylex.h>
-#include <lexer.h>
-#include <parser.h>
-#include <stdio.h>
+#include "parser.hpp"
+#include "lexer.hpp"
 
 int main(int argc, char** argv) {
 	if(argc > 1) {

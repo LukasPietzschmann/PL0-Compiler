@@ -1,6 +1,8 @@
 #pragma once
 
-typedef enum {
+#include <string>
+
+using token_type = enum token_type {
 	END_OF_FILE = 0,
 	DOT = 1,
 	CONST = 2,
@@ -34,6 +36,6 @@ typedef enum {
 	PAREN_OPEN = 30,
 	PAREN_CLOSE = 31,
 	UNDEFINED_CHAR = 32
-} token_type;
+};
 
-const char* get_name_for_type(token_type t);
+std::string get_name_for_type(token_type t);
