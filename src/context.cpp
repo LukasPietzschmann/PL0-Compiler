@@ -2,12 +2,26 @@
 
 #include "context.hpp"
 
-#include <iostream>
-#include <string>
-
 context& context::the() {
 	static context instance;
 	return instance;
+}
+
+std::string context::get_name_for_type(int entry_type) {
+	std::vector<std::string> names;
+	names.reserve(2);
+	if(entry_type & t_var)
+		names.emplace_back("Variable");
+	if(entry_type & t_const)
+		names.emplace_back("Constant");
+	if(entry_type & t_procedure)
+		names.emplace_back("Procedure");
+
+	std::string output = names[0];
+	for(int i = 1; i < names.size(); ++i)
+		output += ", " + names[i];
+
+	return output;
 }
 
 void context::level_up() { m_context_table.emplace_back(); }
@@ -60,4 +74,4 @@ std::ostream& operator<<(std::ostream& os, const context& context) {
 	return os;
 }
 
-void context::print() { std::cout << *this << std::endl; }
+void context::print() const { std::cout << *this << std::endl; }

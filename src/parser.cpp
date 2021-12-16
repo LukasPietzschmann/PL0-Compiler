@@ -25,9 +25,10 @@ void block() {
 			consume(EQUAL);
 			const auto& value = consume(NUMBER);
 			if(ident.has_value() && value.has_value()) {
-				if(context::the().insert(ident->read_value.as_string(), context::t_const, value->read_value.as_int()) ==
-						context::c_already_declared)
-					SET_ERROR("Constant " + ident->read_value.as_string() + " already declared");
+				if(context::the().insert(ident->lexeme.as_string(),
+						   context::context::t_const,
+						   value->lexeme.as_int()) == context::c_already_declared)
+					CONST_ALREADY_DECLARED(ident->lexeme.as_string());
 			}
 		};
 
@@ -40,8 +41,8 @@ void block() {
 		const auto& verify_ident = []() {
 			const auto& ident = consume(IDENT);
 			if(ident.has_value()) {
-				if(context::the().insert(ident->read_value.as_string(), context::t_var) == context::c_already_declared)
-					SET_ERROR("Variable " + ident->read_value.as_string() + " already declared");
+				if(context::the().insert(ident->lexeme.as_string(), context::t_var) == context::c_already_declared)
+					VAR_ALREADY_DECLARED(ident->lexeme.as_string());
 			}
 		};
 
@@ -53,9 +54,9 @@ void block() {
 	while(match_and_advance(PROCEDURE)) {
 		const auto& ident = consume(IDENT);
 		if(ident.has_value()) {
-			if(context::the().insert(ident->read_value.as_string(), context::t_procedure, -1) ==
+			if(context::the().insert(ident->lexeme.as_string(), context::t_procedure, -1) ==
 					context::c_already_declared)
-				SET_ERROR("Procedure " + ident->read_value.as_string() + " already declared");
+				PROCEDURE_ALREADY_DECLARED(ident->lexeme.as_string());
 		}
 		consume(SEMICOLON);
 		context::the().level_up();
@@ -88,9 +89,7 @@ void assignment() {
 	if(ident.has_value()) {
 		unsigned long level_delta;
 		int value;
-		if(context::the().lookup(ident->read_value.as_string(), context::t_var, level_delta, value) &
-				(context::c_wrong_type | context::c_not_found))
-			SET_ERROR("Could not find variable " + ident->read_value.as_string());
+		LOOKUP(ident->lexeme.as_string(), context::t_var, level_delta, value);
 	}
 	consume(ASSIGNMENT);
 	expression();
@@ -102,9 +101,7 @@ void call() {
 	if(ident.has_value()) {
 		unsigned long level_delta;
 		int value;
-		if(context::the().lookup(ident->read_value.as_string(), context::t_procedure, level_delta, value) &
-				(context::c_wrong_type | context::c_not_found))
-			SET_ERROR("Could not find procedure " + ident->read_value.as_string());
+		LOOKUP(ident->lexeme.as_string(), context::t_procedure, level_delta, value);
 	}
 }
 
@@ -114,9 +111,7 @@ void get() {
 	if(ident.has_value()) {
 		unsigned long level_delta;
 		int value;
-		if(context::the().lookup(ident->read_value.as_string(), context::t_var, level_delta, value) &
-				(context::c_wrong_type | context::c_not_found))
-			SET_ERROR("Could not find variable " + ident->read_value.as_string());
+		LOOKUP(ident->lexeme.as_string(), context::t_var, level_delta, value);
 	}
 }
 
@@ -175,12 +170,7 @@ void factor() {
 		if(ident.has_value()) {
 			unsigned long level_delta;
 			int value;
-			if(context::the().lookup(ident->read_value.as_string(),
-					   context::t_var | context::t_const,
-					   level_delta,
-					   value) &
-					(context::c_wrong_type | context::c_not_found))
-				SET_ERROR("Could not find variable or constant " + ident->read_value.as_string());
+			LOOKUP(ident->lexeme.as_string(), context::t_var | context::t_const, level_delta, value);
 		}
 	};
 

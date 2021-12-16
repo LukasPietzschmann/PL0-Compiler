@@ -13,11 +13,11 @@ struct token {
 		int as_int() const { return std::stoi(raw_value); }
 	};
 
-	token() noexcept : type(END_OF_FILE), line_number(0), read_value("") {}
+	token() noexcept : type(END_OF_FILE), line_number(0), lexeme("") {}
 	token(token_type type, unsigned int lineNumber, char* read_string) :
-		type(type), line_number(lineNumber), read_value(std::string(read_string)) {}
+		type(type), line_number(lineNumber), lexeme(std::string(read_string)) {}
 
 	token_type type;
 	unsigned int line_number;
-	token_value read_value;
+	token_value lexeme;
 };
