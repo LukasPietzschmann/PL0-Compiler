@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 
+#include "context.hpp"
 #include "logger.hpp"
 #include "redefine_yylex.hpp"
 

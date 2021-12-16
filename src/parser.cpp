@@ -3,6 +3,7 @@
 token current_token;
 
 bool parse() {
+	context::the().level_up();
 	current_token = get_token();
 	program();
 	if(!match(END_OF_FILE))
@@ -19,27 +20,48 @@ void program() {
 
 void block() {
 	if(match(CONST)) {
-		consume(IDENT);
-		consume(EQUAL);
-		consume(NUMBER);
-		while(match(COMMA)) {
-			consume(IDENT);
+		const auto& verify_ident = []() {
+			const auto& ident = consume(IDENT);
 			consume(EQUAL);
-			consume(NUMBER);
-		}
+			const auto& value = consume(NUMBER);
+			if(ident.has_value() && value.has_value()) {
+				if(context::the().insert(ident->read_value.as_string(), context::t_const, value->read_value.as_int()) ==
+						context::c_already_declared)
+					SET_ERROR("Constant " + ident->read_value.as_string() + " already declared");
+			}
+		};
+
+		verify_ident();
+		while(match(COMMA))
+			verify_ident();
 		consume(SEMICOLON);
 	}
 	if(match(VAR)) {
-		consume(IDENT);
+		const auto& verify_ident = []() {
+			const auto& ident = consume(IDENT);
+			if(ident.has_value()) {
+				if(context::the().insert(ident->read_value.as_string(), context::t_var) == context::c_already_declared)
+					SET_ERROR("Variable " + ident->read_value.as_string() + " already declared");
+			}
+		};
+
+		verify_ident();
 		while(match(COMMA))
-			consume(IDENT);
+			verify_ident();
 		consume(SEMICOLON);
 	}
 	while(match(PROCEDURE)) {
-		consume(IDENT);
+		const auto& ident = consume(IDENT);
+		if(ident.has_value()) {
+			if(context::the().insert(ident->read_value.as_string(), context::t_procedure, -1) ==
+					context::c_already_declared)
+				SET_ERROR("Procedure " + ident->read_value.as_string() + " already declared");
+		}
 		consume(SEMICOLON);
+		context::the().level_up();
 		block();
 		consume(SEMICOLON);
+		context::the().level_down();
 	}
 	statement();
 }
@@ -62,19 +84,40 @@ void statement() {
 }
 
 void assignment() {
-	consume(IDENT);
+	const auto& ident = consume(IDENT);
+	if(ident.has_value()) {
+		int level_delta;
+		int value;
+		if(context::the().lookup(ident->read_value.as_string(), context::t_var, level_delta, value) &
+				(context::c_wrong_type | context::c_not_found))
+			SET_ERROR("Could not find variable " + ident->read_value.as_string());
+	}
 	consume(ASSIGNMENT);
 	expression();
 }
 
 void call() {
 	consume(CALL);
-	consume(IDENT);
+	const auto& ident = consume(IDENT);
+	if(ident.has_value()) {
+		int level_delta;
+		int value;
+		if(context::the().lookup(ident->read_value.as_string(), context::t_procedure, level_delta, value) &
+				(context::c_wrong_type | context::c_not_found))
+			SET_ERROR("Could not find procedure " + ident->read_value.as_string());
+	}
 }
 
 void get() {
 	consume(GET);
-	consume(IDENT);
+	const auto& ident = consume(IDENT);
+	if(ident.has_value()) {
+		int level_delta;
+		int value;
+		if(context::the().lookup(ident->read_value.as_string(), context::t_var, level_delta, value) &
+				(context::c_wrong_type | context::c_not_found))
+			SET_ERROR("Could not find variable " + ident->read_value.as_string());
+	}
 }
 
 void post() {
@@ -128,9 +171,22 @@ void term() {
 }
 
 void factor() {
+	static const auto verify_ident = [](const std::optional<token>& ident) {
+		if(ident.has_value()) {
+			int level_delta;
+			int value;
+			if(context::the().lookup(ident->read_value.as_string(),
+					   context::t_var | context::t_const,
+					   level_delta,
+					   value) &
+					(context::c_wrong_type | context::c_not_found))
+				SET_ERROR("Could not find variable or constant " + ident->read_value.as_string());
+		}
+	};
+
 	switch(current_token.type) {
-		case IDENT:
-		case NUMBER: consume(NUMBER, IDENT); break;
+		case IDENT: verify_ident(consume(IDENT)); break;
+		case NUMBER: consume(NUMBER); break;
 		case PAREN_OPEN:
 			consume(PAREN_OPEN);
 			expression();
