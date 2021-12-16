@@ -6,7 +6,7 @@ bool parse() {
 	context::the().level_up();
 	current_token = get_token();
 	program();
-	if(!match(END_OF_FILE))
+	if(!match_and_advance(END_OF_FILE))
 		SET_ERROR("Found additional characters after the end of the program");
 	return has_error;
 }
@@ -19,7 +19,7 @@ void program() {
 }
 
 void block() {
-	if(match(CONST)) {
+	if(match_and_advance(CONST)) {
 		const auto& verify_ident = []() {
 			const auto& ident = consume(IDENT);
 			consume(EQUAL);
@@ -32,11 +32,11 @@ void block() {
 		};
 
 		verify_ident();
-		while(match(COMMA))
+		while(match_and_advance(COMMA))
 			verify_ident();
 		consume(SEMICOLON);
 	}
-	if(match(VAR)) {
+	if(match_and_advance(VAR)) {
 		const auto& verify_ident = []() {
 			const auto& ident = consume(IDENT);
 			if(ident.has_value()) {
@@ -46,11 +46,11 @@ void block() {
 		};
 
 		verify_ident();
-		while(match(COMMA))
+		while(match_and_advance(COMMA))
 			verify_ident();
 		consume(SEMICOLON);
 	}
-	while(match(PROCEDURE)) {
+	while(match_and_advance(PROCEDURE)) {
 		const auto& ident = consume(IDENT);
 		if(ident.has_value()) {
 			if(context::the().insert(ident->read_value.as_string(), context::t_procedure, -1) ==
@@ -67,19 +67,19 @@ void block() {
 }
 
 void statement() {
-	if(current_token.type == IDENT)
+	if(match(IDENT))
 		assignment();
-	else if(current_token.type == CALL)
+	else if(match(CALL))
 		call();
-	else if(current_token.type == GET)
+	else if(match(GET))
 		get();
-	else if(current_token.type == POST)
+	else if(match(POST))
 		post();
-	else if(current_token.type == BEG)
+	else if(match(BEG))
 		begin();
-	else if(current_token.type == IF)
+	else if(match(IF))
 		condition();
-	else if(current_token.type == WHILE)
+	else if(match(WHILE))
 		loop();
 }
 
@@ -128,7 +128,7 @@ void post() {
 void begin() {
 	consume(BEG);
 	statement();
-	while(match(SEMICOLON))
+	while(match_and_advance(SEMICOLON))
 		statement();
 	consume(END);
 }
@@ -148,25 +148,25 @@ void loop() {
 }
 
 void comparison() {
-	if(match(ODD))
+	if(match_and_advance(ODD))
 		expression();
 	else {
 		expression();
-		if(match(EQUAL, HASH, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL))
+		if(match_and_advance(EQUAL, HASH, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL))
 			expression();
 	}
 }
 
 void expression() {
-	match(PLUS, MINUS);
+	match_and_advance(PLUS, MINUS);
 	term();
-	while(match(PLUS, MINUS))
+	while(match_and_advance(PLUS, MINUS))
 		term();
 }
 
 void term() {
 	factor();
-	while(match(STAR, SLASH))
+	while(match_and_advance(STAR, SLASH))
 		factor();
 }
 
@@ -196,11 +196,18 @@ void factor() {
 }
 
 template <typename... Args>
+bool match_and_advance(Args... types) {
+	if(!match(types...))
+		return false;
+	current_token = get_token();
+	return true;
+}
+
+template <typename... Args>
 bool match(Args... types) {
 	for(const auto& type : {types...}) {
 		if(current_token.type != type)
 			continue;
-		current_token = get_token();
 		return true;
 	}
 	return false;

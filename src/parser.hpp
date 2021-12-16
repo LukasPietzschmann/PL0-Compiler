@@ -18,6 +18,8 @@ bool parse();
 token get_token();
 
 template <typename... Args>
+bool match_and_advance(Args... types);
+template <typename... Args>
 bool match(Args... types);
 template <typename... Args>
 std::optional<token> consume(Args... types);
