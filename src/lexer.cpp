@@ -901,157 +901,157 @@ BEGIN COMMENT;
 case 2:
 YY_RULE_SETUP
 #line 10 "lexer.lex"
-return (token){DOT, line};
+return (token){DOT, line, yytext};
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 11 "lexer.lex"
-return (token){CONST, line};
+return (token){CONST, line, yytext};
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 12 "lexer.lex"
-return (token){EQUAL, line};
+return (token){EQUAL, line, yytext};
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 13 "lexer.lex"
-return (token){COMMA, line};
+return (token){COMMA, line, yytext};
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 14 "lexer.lex"
-return (token){SEMICOLON, line};
+return (token){SEMICOLON, line, yytext};
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 15 "lexer.lex"
-return (token){VAR, line};
+return (token){VAR, line, yytext};
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 16 "lexer.lex"
-return (token){PROCEDURE, line};
+return (token){PROCEDURE, line, yytext};
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 17 "lexer.lex"
-return (token){ASSIGNMENT, line};
+return (token){ASSIGNMENT, line, yytext};
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 18 "lexer.lex"
-return (token){CALL, line};
+return (token){CALL, line, yytext};
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 19 "lexer.lex"
-return (token){GET, line};
+return (token){GET, line, yytext};
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 20 "lexer.lex"
-return (token){POST, line};
+return (token){POST, line, yytext};
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 21 "lexer.lex"
-return (token){BEG, line};
+return (token){BEG, line, yytext};
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 22 "lexer.lex"
-return (token){END, line};
+return (token){END, line, yytext};
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 23 "lexer.lex"
-return (token){IF, line};
+return (token){IF, line, yytext};
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 24 "lexer.lex"
-return (token){THEN, line};
+return (token){THEN, line, yytext};
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 25 "lexer.lex"
-return (token){WHILE, line};
+return (token){WHILE, line, yytext};
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 26 "lexer.lex"
-return (token){DO, line};
+return (token){DO, line, yytext};
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 27 "lexer.lex"
-return (token){ODD, line};
+return (token){ODD, line, yytext};
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 28 "lexer.lex"
-return (token){HASH, line};
+return (token){HASH, line, yytext};
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 29 "lexer.lex"
-return (token){LESS, line};
+return (token){LESS, line, yytext};
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 30 "lexer.lex"
-return (token){LESS_EQUAL, line};
+return (token){LESS_EQUAL, line, yytext};
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 31 "lexer.lex"
-return (token){GREATER, line};
+return (token){GREATER, line, yytext};
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 32 "lexer.lex"
-return (token){GREATER_EQUAL, line};
+return (token){GREATER_EQUAL, line, yytext};
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 33 "lexer.lex"
-return (token){PLUS, line};
+return (token){PLUS, line, yytext};
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 34 "lexer.lex"
-return (token){MINUS, line};
+return (token){MINUS, line, yytext};
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 35 "lexer.lex"
-return (token){STAR, line};
+return (token){STAR, line, yytext};
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 36 "lexer.lex"
-return (token){SLASH, line};
+return (token){SLASH, line, yytext};
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 37 "lexer.lex"
-return (token){PAREN_OPEN, line};
+return (token){PAREN_OPEN, line, yytext};
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 38 "lexer.lex"
-return (token){PAREN_CLOSE, line};
+return (token){PAREN_CLOSE, line, yytext};
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 39 "lexer.lex"
-return (token){NUMBER, line};
+return (token){NUMBER, line, yytext};
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 40 "lexer.lex"
-return (token){IDENT, line};
+return (token){IDENT, line, yytext};
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
@@ -1084,7 +1084,7 @@ YY_RULE_SETUP
 case 38:
 YY_RULE_SETUP
 #line 46 "lexer.lex"
-return (token){UNDEFINED_CHAR, line};
+return (token){UNDEFINED_CHAR, line, yytext};
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
