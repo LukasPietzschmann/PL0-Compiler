@@ -13,14 +13,14 @@ context& context::the() {
 void context::level_up() { m_context_table.emplace_back(); }
 
 void context::level_down() {
-	const int level = m_context_table.size() - 1;
+	const unsigned long level = m_context_table.size() - 1;
 	assert(level >= 0);
 	m_context_table[level].clear();
 	m_context_table.pop_back();
 }
 
 context::error_code context::insert(const std::string& name, context::entry_type type, int value) {
-	const int level = m_context_table.size() - 1;
+	const unsigned long level = m_context_table.size() - 1;
 	assert(level >= 0);
 
 	if(m_context_table[level].contains(name))
@@ -30,10 +30,10 @@ context::error_code context::insert(const std::string& name, context::entry_type
 	return c_okay;
 }
 
-context::error_code context::lookup(const std::string& name, int type, int& out_level_delta, int& out_value) {
+context::error_code context::lookup(const std::string& name, int type, unsigned long& out_level_delta, int& out_value) {
 	assert(type != t_unset);
-	const int level = m_context_table.size() - 1;
-	int current_level = level + 1;
+	const unsigned long level = m_context_table.size() - 1;
+	unsigned long current_level = level + 1;
 	out_level_delta = -1;
 
 	while(--current_level >= 0 && !m_context_table[current_level].contains(name))
@@ -51,7 +51,7 @@ context::error_code context::lookup(const std::string& name, int type, int& out_
 }
 
 std::ostream& operator<<(std::ostream& os, const context& context) {
-	const int level = context.m_context_table.size() - 1;
+	const unsigned long level = context.m_context_table.size() - 1;
 	for(int i = 0; i <= level; ++i) {
 		for(const auto& pos : context.m_context_table[i])
 			os << "Key: " << pos.first << pos.second.type << '\n';

@@ -11,7 +11,7 @@ bool parse() {
 	return has_error;
 }
 
-token get_token() { return yylex(); }
+token inline get_token() { return yylex(); }
 
 void program() {
 	block();
@@ -86,7 +86,7 @@ void statement() {
 void assignment() {
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		int level_delta;
+		unsigned long level_delta;
 		int value;
 		if(context::the().lookup(ident->read_value.as_string(), context::t_var, level_delta, value) &
 				(context::c_wrong_type | context::c_not_found))
@@ -100,7 +100,7 @@ void call() {
 	consume(CALL);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		int level_delta;
+		unsigned long level_delta;
 		int value;
 		if(context::the().lookup(ident->read_value.as_string(), context::t_procedure, level_delta, value) &
 				(context::c_wrong_type | context::c_not_found))
@@ -112,7 +112,7 @@ void get() {
 	consume(GET);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		int level_delta;
+		unsigned long level_delta;
 		int value;
 		if(context::the().lookup(ident->read_value.as_string(), context::t_var, level_delta, value) &
 				(context::c_wrong_type | context::c_not_found))
@@ -173,7 +173,7 @@ void term() {
 void factor() {
 	static const auto verify_ident = [](const std::optional<token>& ident) {
 		if(ident.has_value()) {
-			int level_delta;
+			unsigned long level_delta;
 			int value;
 			if(context::the().lookup(ident->read_value.as_string(),
 					   context::t_var | context::t_const,
