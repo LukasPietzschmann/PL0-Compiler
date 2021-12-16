@@ -33,7 +33,7 @@ public:
 	void level_down();
 
 	error_code insert(const std::string& name, entry_type type, int value = 0);
-	error_code lookup(const std::string& name, int type, unsigned long& out_level_delta, int& out_value);
+	error_code lookup(const std::string& name, int type, int& out_level_delta, int& out_value);
 
 	void print() const;
 	friend std::ostream& operator<<(std::ostream& os, const context& context);

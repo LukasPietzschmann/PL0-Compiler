@@ -87,7 +87,7 @@ void statement() {
 void assignment() {
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		unsigned long level_delta;
+		int level_delta;
 		int value;
 		LOOKUP(ident->lexeme.as_string(), context::t_var, level_delta, value);
 	}
@@ -99,7 +99,7 @@ void call() {
 	consume(CALL);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		unsigned long level_delta;
+		int level_delta;
 		int value;
 		LOOKUP(ident->lexeme.as_string(), context::t_procedure, level_delta, value);
 	}
@@ -109,7 +109,7 @@ void get() {
 	consume(GET);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		unsigned long level_delta;
+		int level_delta;
 		int value;
 		LOOKUP(ident->lexeme.as_string(), context::t_var, level_delta, value);
 	}
@@ -168,7 +168,7 @@ void term() {
 void factor() {
 	static const auto verify_ident = [](const std::optional<token>& ident) {
 		if(ident.has_value()) {
-			unsigned long level_delta;
+			int level_delta;
 			int value;
 			LOOKUP(ident->lexeme.as_string(), context::t_var | context::t_const, level_delta, value);
 		}
