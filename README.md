@@ -1,5 +1,5 @@
 # PL0-Compiler
-A compiler for the minimal programming language PL/0 written in C
+A compiler for the minimal programming language PL/0 written in C++
 
 ## Compile the project
 To compile the code yourself, execute the following steps:
