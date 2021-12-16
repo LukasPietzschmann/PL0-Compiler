@@ -157,12 +157,13 @@ bool match(Args... types) {
 }
 
 template <typename... Args>
-bool consume(Args... types) {
+std::optional<token> consume(Args... types) {
+	token old_token = current_token;
 	for(const auto& type : {types...}) {
 		if(current_token.type != type)
 			continue;
 		current_token = get_token();
-		return true;
+		return old_token;
 	}
 
 	std::string token_names;
@@ -173,7 +174,7 @@ bool consume(Args... types) {
 	token_names = token_names.substr(token_names.size() - 6, 5);
 
 	std::string error_msg = "Expected token " + token_names + ", but got " + get_name_for_type(current_token.type);
-	set_error(error_msg);
+	SET_ERROR(error_msg);
 
-	return false;
+	return {};
 }

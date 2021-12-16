@@ -2,6 +2,7 @@
 
 #include <initializer_list>
 #include <iostream>
+#include <optional>
 #include <string>
 
 #include "redefine_yylex.hpp"
@@ -16,7 +17,7 @@ token get_token();
 template <typename... Args>
 bool match(Args... types);
 template <typename... Args>
-bool consume(Args... types);
+std::optional<token> consume(Args... types);
 
 void program();
 
