@@ -5,13 +5,15 @@
 #include <optional>
 #include <string>
 
+#include "logger.hpp"
 #include "redefine_yylex.hpp"
 
 YY_DECL;
 
+#define SET_ERROR(msg) set_error(msg, current_token)
+
 bool parse();
 
-void set_error(std::string_view message);
 token get_token();
 
 template <typename... Args>

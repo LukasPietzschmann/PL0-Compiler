@@ -1,19 +1,13 @@
 #include "parser.hpp"
 
 token current_token;
-bool has_error;
 
 bool parse() {
 	current_token = get_token();
 	program();
 	if(!match(END_OF_FILE))
-		set_error("Found additional characters after the end of the program");
+		SET_ERROR("Found additional characters after the end of the program");
 	return has_error;
-}
-
-void set_error(std::string_view message) {
-	has_error = true;
-	std::cout << "[Line " << current_token.line_number << "] " << message << std::endl;
 }
 
 token get_token() { return yylex(); }
@@ -141,7 +135,7 @@ void factor() {
 			consume(PAREN_OPEN);
 			expression();
 			consume(PAREN_CLOSE);
-		default: set_error("Unexpected Token"); break;
+		default: SET_ERROR("Unexpected Token"); break;
 	}
 }
 
