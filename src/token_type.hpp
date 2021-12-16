@@ -2,7 +2,7 @@
 
 #include <string>
 
-using token_type = enum token_type {
+enum token_type {
 	END_OF_FILE = 0,
 	DOT = 1,
 	CONST = 2,

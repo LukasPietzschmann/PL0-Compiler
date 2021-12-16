@@ -5,7 +5,7 @@
 
 #include "token_type.hpp"
 
-using token = struct token {
+struct token {
 	struct token_value {
 		explicit token_value(std::string raw_value) : raw_value(std::move(raw_value)) {}
 		std::string raw_value;
