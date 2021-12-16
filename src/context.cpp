@@ -5,16 +5,23 @@
 #include <iostream>
 #include <string>
 
+context& context::the() {
+	static context instance;
+	return instance;
+}
+
 void context::level_up() { m_context_table.emplace_back(); }
 
 void context::level_down() {
 	const int level = m_context_table.size() - 1;
+	assert(level >= 0);
 	m_context_table[level].clear();
 	m_context_table.pop_back();
 }
 
 context::error_code context::insert(const std::string& name, context::entry_type type, int value) {
 	const int level = m_context_table.size() - 1;
+	assert(level >= 0);
 
 	if(m_context_table[level].contains(name))
 		return c_already_declared;
@@ -23,10 +30,8 @@ context::error_code context::insert(const std::string& name, context::entry_type
 	return c_okay;
 }
 
-context::error_code context::lookup(const std::string& name,
-		context::entry_type type,
-		int& out_level_delta,
-		int& out_value) {
+context::error_code context::lookup(const std::string& name, int type, int& out_level_delta, int& out_value) {
+	assert(type != t_unset);
 	const int level = m_context_table.size() - 1;
 	int current_level = level + 1;
 	out_level_delta = -1;
