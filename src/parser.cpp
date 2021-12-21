@@ -3,7 +3,6 @@
 token current_token;
 
 bool parse() {
-	context::the().level_up();
 	current_token = get_token();
 	program();
 	if(!match_and_advance(END_OF_FILE))
@@ -19,50 +18,28 @@ void program() {
 }
 
 void block() {
-	if(match_and_advance(CONST)) {
-		const auto& verify_ident = []() {
-			const auto& ident = consume(IDENT);
+	if(match(CONST)) {
+		consume(IDENT);
+		consume(EQUAL);
+		consume(NUMBER);
+		while(match(COMMA)) {
+			consume(IDENT);
 			consume(EQUAL);
-			const auto& value = consume(NUMBER);
-			if(ident.has_value() && value.has_value()) {
-				if(context::the().insert(ident->lexeme.as_string(),
-						   context::context::t_const,
-						   value->lexeme.as_int()) == context::c_already_declared)
-					CONST_ALREADY_DECLARED(ident->lexeme.as_string());
-			}
-		};
-
-		verify_ident();
-		while(match_and_advance(COMMA))
-			verify_ident();
-		consume(SEMICOLON);
-	}
-	if(match_and_advance(VAR)) {
-		const auto& verify_ident = []() {
-			const auto& ident = consume(IDENT);
-			if(ident.has_value()) {
-				if(context::the().insert(ident->lexeme.as_string(), context::t_var) == context::c_already_declared)
-					VAR_ALREADY_DECLARED(ident->lexeme.as_string());
-			}
-		};
-
-		verify_ident();
-		while(match_and_advance(COMMA))
-			verify_ident();
-		consume(SEMICOLON);
-	}
-	while(match_and_advance(PROCEDURE)) {
-		const auto& ident = consume(IDENT);
-		if(ident.has_value()) {
-			if(context::the().insert(ident->lexeme.as_string(), context::t_procedure, -1) ==
-					context::c_already_declared)
-				PROCEDURE_ALREADY_DECLARED(ident->lexeme.as_string());
+			consume(NUMBER);
 		}
 		consume(SEMICOLON);
-		context::the().level_up();
+	}
+	if(match(VAR)) {
+		consume(IDENT);
+		while(match(COMMA))
+			consume(IDENT);
+		consume(SEMICOLON);
+	}
+	while(match(PROCEDURE)) {
+		consume(IDENT);
+		consume(SEMICOLON);
 		block();
 		consume(SEMICOLON);
-		context::the().level_down();
 	}
 	statement();
 }
@@ -85,34 +62,19 @@ void statement() {
 }
 
 void assignment() {
-	const auto& ident = consume(IDENT);
-	if(ident.has_value()) {
-		int level_delta;
-		int value;
-		LOOKUP(ident->lexeme.as_string(), context::t_var, level_delta, value);
-	}
+	consume(IDENT);
 	consume(ASSIGNMENT);
 	expression();
 }
 
 void call() {
 	consume(CALL);
-	const auto& ident = consume(IDENT);
-	if(ident.has_value()) {
-		int level_delta;
-		int value;
-		LOOKUP(ident->lexeme.as_string(), context::t_procedure, level_delta, value);
-	}
+	consume(IDENT);
 }
 
 void get() {
 	consume(GET);
-	const auto& ident = consume(IDENT);
-	if(ident.has_value()) {
-		int level_delta;
-		int value;
-		LOOKUP(ident->lexeme.as_string(), context::t_var, level_delta, value);
-	}
+	consume(IDENT);
 }
 
 void post() {
@@ -166,17 +128,9 @@ void term() {
 }
 
 void factor() {
-	static const auto verify_ident = [](const std::optional<token>& ident) {
-		if(ident.has_value()) {
-			int level_delta;
-			int value;
-			LOOKUP(ident->lexeme.as_string(), context::t_var | context::t_const, level_delta, value);
-		}
-	};
-
 	switch(current_token.type) {
-		case IDENT: verify_ident(consume(IDENT)); break;
-		case NUMBER: consume(NUMBER); break;
+		case IDENT:
+		case NUMBER: consume(NUMBER, IDENT); break;
 		case PAREN_OPEN:
 			consume(PAREN_OPEN);
 			expression();
