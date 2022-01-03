@@ -6,6 +6,7 @@
 #include <string>
 
 #include "logger.hpp"
+#include "oplist.hpp"
 #include "redefine_yylex.hpp"
 
 YY_DECL;
@@ -17,26 +18,26 @@ bool parse();
 token get_token();
 
 template <typename... Args>
-bool match_and_advance(Args... types);
+std::optional<token_type> match_and_advance(Args... types);
 template <typename... Args>
-bool match(Args... types);
+std::optional<token_type> match(Args... types);
 template <typename... Args>
 std::optional<token> consume(Args... types);
 
 void program();
 
-void block();
+oplist* block();
 
-void statement();
-void assignment();
-void call();
-void get();
-void post();
-void begin();
-void condition();
-void loop();
+oplist* statement();
+oplist* assignment();
+oplist* call();
+oplist* get();
+oplist* post();
+oplist* begin();
+oplist* condition();
+oplist* loop();
 
-void comparison();
-void expression();
-void term();
-void factor();
+expr_tree* comparison();
+expr_tree* expression();
+expr_tree* term();
+expr_tree* factor();
