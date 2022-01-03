@@ -7,10 +7,37 @@
 #include <optional>
 #include <vector>
 
-template <typename T>
 class tree {
 public:
-	using ptr = std::shared_ptr<tree<T>>;
+	struct entry {
+		enum entry_type {
+			t_unset,
+			t_block,
+			t_const,
+			t_var,
+			t_proc,
+			t_assignment,
+			t_call,
+			t_get,
+			t_post,
+			t_begin,
+			t_if,
+			t_loop,
+			t_odd,
+			t_equal,
+			t_not_equal,
+			t_less,
+			t_less_equal,
+			t_greater,
+			t_greater_equal,
+			t_plus,
+			t_minus,
+			t_start,
+			t_slash,
+			t_identifier,
+			t_literal
+		};
+	};
 
 	explicit tree(const T& _v);
 	template <typename... Args>
@@ -18,7 +45,9 @@ public:
 
 	int size() const;
 
-	void append(tree::ptr child);
+	void append(tree child);
+	template <typename... Args>
+	void append(Args... args);
 
 	void set_value(const T& value);
 	T& get_value() const;
@@ -36,5 +65,5 @@ public:
 
 protected:
 	T m_value;
-	std::vector<tree<T>::ptr> m_children;
+	std::vector<tree> m_children;
 };

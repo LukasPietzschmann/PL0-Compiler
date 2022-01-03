@@ -17,25 +17,48 @@ void program() {
 	consume(DOT);
 }
 
+/*
+• Block-Knoten
+	• Zeiger auf Var-Knoten
+• Var-Knoten
+	• Zeiger auf Var-Knoten
+• statement-Knoten
+	• Zeiger auf Statement-Knoten
+• Expression-Knoten anaolg zu arithmetischen Termen • Zweiger auf Expression-Knoten
+
+• Ende
+• Zuweisung
+• Funktionsaufruf
+• Eingabe
+• Ausgabe
+• Bedingter Sprung (false) • Unbedingter Sprung
+• Leere Knoten
+
+		seite 467 + 470
+		statement knoten mit next, jmp und expr zeiger
+				seite 484 + 493
+						expression knoten
+ */
+
 void block() {
 	if(match(CONST)) {
 		consume(IDENT);
 		consume(EQUAL);
 		consume(NUMBER);
-		while(match(COMMA)) {
+		while(match_and_advance(COMMA)) {
 			consume(IDENT);
 			consume(EQUAL);
 			consume(NUMBER);
 		}
 		consume(SEMICOLON);
 	}
-	if(match(VAR)) {
+	if(match_and_advance(VAR)) {
 		consume(IDENT);
-		while(match(COMMA))
+		while(match_and_advance(COMMA))
 			consume(IDENT);
 		consume(SEMICOLON);
 	}
-	while(match(PROCEDURE)) {
+	while(match_and_advance(PROCEDURE)) {
 		consume(IDENT);
 		consume(SEMICOLON);
 		block();
@@ -172,7 +195,7 @@ std::optional<token> consume(Args... types) {
 		token_names += get_name_for_type(type);
 		token_names += ", or";
 	}
-	token_names = token_names.substr(token_names.size() - 6, 5);
+	token_names = token_names.substr(0, token_names.size() - 4);
 
 	std::string error_msg = "Expected token " + token_names + ", but got " + get_name_for_type(current_token.type);
 	SET_ERROR(error_msg);
