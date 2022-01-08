@@ -62,11 +62,9 @@ oplist* block() {
 		current_list_entry = proc_decl;
 	}
 
-	auto* stmt = statement();
-	current_list_entry->set_next(stmt);
+	current_list_entry->set_next(statement());
 
-	std::cout << *start << std::endl;
-	return stmt;
+	return start;
 }
 
 oplist* statement() {
@@ -133,7 +131,7 @@ oplist* begin() {
 		stmt_to_set_next_on = next;
 	}
 	consume(END);
-	return stmt_to_set_next_on;
+	return stmt;
 }
 
 oplist* condition() {
