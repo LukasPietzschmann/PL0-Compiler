@@ -2,19 +2,22 @@
 
 token current_token;
 
-bool parse() {
+std::optional<oplist> parse() {
 	current_token = get_token();
-	program();
+	auto* list = program();
 	if(!match_and_advance(END_OF_FILE))
-		SET_ERROR("Found additional characters after the end of the program");
-	return has_error;
+		SET_ERROR("Found additional characters after the ^ of the program");
+	if(has_error)
+		return {};
+	return *list;
 }
 
 token inline get_token() { return yylex(); }
 
-void program() {
-	block();
+oplist* program() {
+	auto* list = block();
 	consume(DOT);
+	return list;
 }
 
 oplist* block() {
@@ -28,7 +31,7 @@ oplist* block() {
 			if(ident.has_value() && number.has_value()) {
 				auto* const_assignment = new oplist(oplist::t_assignment, ident->lexeme.as_string());
 				const_assignment->set_expr(new expr_tree(number->lexeme.as_int()));
-				current_list_entry->set_next(const_assignment);
+				get_last_entry_in_list(*current_list_entry)->set_next(const_assignment);
 				current_list_entry = const_assignment;
 			}
 		};
@@ -41,7 +44,7 @@ oplist* block() {
 		const auto& parse_var_decl = [&current_list_entry]() {
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
 				auto* var_decl = new oplist(oplist::t_assignment, ident->lexeme.as_string());
-				current_list_entry->set_next(var_decl);
+				get_last_entry_in_list(*current_list_entry)->set_next(var_decl);
 				current_list_entry = var_decl;
 			}
 		};
@@ -58,12 +61,13 @@ oplist* block() {
 		consume(SEMICOLON);
 		proc_decl->set_next(block());
 		consume(SEMICOLON);
-		current_list_entry->set_next(proc_decl);
+		get_last_entry_in_list(*current_list_entry)->set_next(proc_decl);
 		current_list_entry = proc_decl;
 	}
 
-	current_list_entry->set_next(statement());
+	get_last_entry_in_list(*current_list_entry)->set_next(statement());
 
+	std::cout << *start << std::endl;
 	return start;
 }
 
@@ -127,7 +131,7 @@ oplist* begin() {
 	auto* stmt_to_set_next_on = stmt;
 	while(match_and_advance(SEMICOLON)) {
 		auto* next = statement();
-		stmt_to_set_next_on->set_next(next);
+		get_last_entry_in_list(*stmt_to_set_next_on)->set_next(next);
 		stmt_to_set_next_on = next;
 	}
 	consume(END);
@@ -137,18 +141,29 @@ oplist* begin() {
 oplist* condition() {
 	consume(IF);
 	auto* if_stmt = new oplist(oplist::t_cond_jmp);
+	auto* nop = new oplist(oplist::t_nop);
 	if_stmt->set_expr(comparison());
 	consume(THEN);
-	if_stmt->set_next(statement());
+	auto* stmt = statement();
+	if_stmt->set_next(stmt);
+	stmt->set_next(nop);
+	if_stmt->set_jmp(nop);
 	return if_stmt;
 }
 
 oplist* loop() {
 	consume(WHILE);
-	auto* while_loop = new oplist(oplist(oplist::t_cond_jmp));
+	auto* while_loop = new oplist(oplist::t_cond_jmp);
+	auto* jmp = new oplist(oplist::t_jmp);
+	auto* nop = new oplist(oplist::t_nop);
 	while_loop->set_expr(comparison());
 	consume(DO);
-	while_loop->set_next(statement());
+	auto* stmt = statement();
+	while_loop->set_next(stmt);
+	jmp->set_jmp(while_loop);
+	stmt->set_next(jmp);
+	stmt->set_next(nop);
+	while_loop->set_jmp(nop);
 	return while_loop;
 }
 
@@ -238,4 +253,13 @@ std::optional<token> consume(Args... types) {
 	SET_ERROR(error_msg);
 
 	return {};
+}
+
+inline oplist* get_last_entry_in_list(oplist& list) {
+	if(list.get_next() == nullptr)
+		return &list;
+	auto* next = list.get_next();
+	while(next->get_next() != nullptr)
+		next = next->get_next();
+	return next;
 }
