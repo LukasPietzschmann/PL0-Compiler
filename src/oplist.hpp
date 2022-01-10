@@ -61,6 +61,7 @@ public:
 	oplist::ptr get_jmp() const;
 	expr_tree::ptr get_expr() const;
 	entry_type get_type() const;
+	const std::string& get_identifier() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const oplist& oplist);
 

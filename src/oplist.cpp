@@ -40,6 +40,7 @@ oplist::ptr oplist::get_next() const { return m_next; }
 oplist::ptr oplist::get_jmp() const { return m_jmp; }
 expr_tree::ptr oplist::get_expr() const { return m_expr; }
 oplist::entry_type oplist::get_type() const { return m_type; }
+const std::string& oplist::get_identifier() const { return m_identifier; }
 
 std::ostream& operator<<(std::ostream& os, const oplist& oplist) {
 	os << oplist.m_type << " " << oplist.m_identifier;
