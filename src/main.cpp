@@ -1,6 +1,7 @@
 #include "context.hpp"
 #include "parser.hpp"
 #include "lexer.hpp"
+#include "optimization.hpp"
 #include "runtime.hpp"
 #include "stack.hpp"
 
@@ -11,7 +12,8 @@ int main(int argc, char** argv) {
 			return -1;
 		yyin = input;
 	}
-	const auto& pars_res = parse();
+	oplist::ptr pars_res = parse();
+	pars_res = optimize_nops(pars_res);
 
 	if(pars_res == nullptr)
 		return 1;

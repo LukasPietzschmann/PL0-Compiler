@@ -79,9 +79,8 @@ oplist::ptr block() {
 		proc_decl->set_next(b);
 		consume(SEMICOLON);
 		get_last_entry_in_list(b)->set_next(oplist::make_ptr(oplist::t_end));
+		proc_decl = optimize_nops(proc_decl);
 		context::the().level_down();
-		// get_last_entry_in_list(current_list_entry)->set_next(proc_decl);
-		// current_list_entry = proc_decl;
 	}
 
 	get_last_entry_in_list(current_list_entry)->set_next(statement());

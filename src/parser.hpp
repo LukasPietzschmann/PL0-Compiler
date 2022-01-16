@@ -6,6 +6,7 @@
 
 #include "context.hpp"
 #include "oplist.hpp"
+#include "optimization.hpp"
 #include "redefine_yylex.hpp"
 
 YY_DECL;
