@@ -1,10 +1,11 @@
-// Based on the implementation of Prof. Dr. Winfried Bantel(https://bantel.informatik.hs-aalen.de)
-
 #pragma once
 
 #include <cassert>
+#include <functional>
 #include <iostream>
+#include <map>
 #include <numeric>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -29,14 +30,20 @@
 		}                                                                                                  \
 	} while(0)
 
-#define CHECK_TYPE(identifier, expected_type)    \
-	do {                                         \
-		int d;                                   \
-		LOOKUP(identifier, expected_type, d, d); \
-	} while(0)
-
+class oplist;
 class context {
 public:
+	struct proc_table_entry {
+		std::shared_ptr<oplist> procedure;
+		int number_of_variables;
+	};
+
+	struct context_position {
+		context_position(int delta, int id) : delta(delta), id(id) {}
+		int delta;
+		int id;
+	};
+
 	enum entry_type { t_unset = -1, t_var = 1, t_const = 2, t_procedure = 4 };
 	enum error_code { c_not_found = 1, c_already_declared = 2, c_wrong_type = 4, c_okay = 8 };
 
@@ -58,13 +65,18 @@ public:
 	void level_up();
 	void level_down();
 
-	error_code insert(const std::string& name, entry_type type, int value = 0);
-	error_code lookup(const std::string& name, int type, int& out_level_delta, int& out_value);
+	error_code insert(const std::string& name,
+			entry_type type,
+			std::optional<int> value = {},
+			std::shared_ptr<oplist> proc_start = {});
+	error_code lookup(const std::string& name, int type, int& out_level_delta, int& out_value) const;
+	const context::proc_table_entry& lookup_procedure(int number) const;
 
 	void print() const;
 	friend std::ostream& operator<<(std::ostream& os, const context& context);
 
 private:
-	context() = default;
+	context();
 	std::vector<std::unordered_map<std::string, context_entry> > m_context_table;
+	std::map<int, proc_table_entry> m_proc_table;
 };

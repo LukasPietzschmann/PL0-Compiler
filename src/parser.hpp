@@ -10,7 +10,7 @@
 
 YY_DECL;
 
-std::optional<oplist> parse();
+oplist::ptr parse();
 
 token get_token();
 

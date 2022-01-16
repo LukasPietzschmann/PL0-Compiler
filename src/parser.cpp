@@ -2,7 +2,7 @@
 
 token current_token;
 
-std::optional<oplist> parse() {
+oplist::ptr parse() {
 	context::the().level_up();
 	current_token = get_token();
 	auto list = program();
@@ -10,7 +10,7 @@ std::optional<oplist> parse() {
 		SET_ERROR("Found additional characters after the ^ of the program");
 	if(has_error)
 		return {};
-	return *list;
+	return list;
 }
 
 token inline get_token() { return yylex(); }
@@ -18,6 +18,7 @@ token inline get_token() { return yylex(); }
 oplist::ptr program() {
 	auto list = block();
 	consume(DOT);
+	// get_last_entry_in_list(list)->set_next(oplist::make_ptr(oplist::t_end));
 	return list;
 }
 
@@ -30,13 +31,15 @@ oplist::ptr block() {
 			consume(EQUAL);
 			const auto& number = consume(NUMBER);
 			if(ident.has_value() && number.has_value()) {
-				auto const_assignment = oplist::make_ptr(oplist::t_assignment, ident->lexeme.as_string());
-				const_assignment->set_expr(expr_tree::make_ptr(number->lexeme.as_int()));
-				get_last_entry_in_list(current_list_entry)->set_next(const_assignment);
-				current_list_entry = const_assignment;
 				if(context::the().insert(ident->lexeme.as_string(), context::t_const, number->lexeme.as_int()) ==
 						context::c_already_declared)
 					CONST_ALREADY_DECLARED(ident->lexeme.as_string());
+				int delta, id;
+				LOOKUP(ident->lexeme.as_string(), context::t_const, delta, id);
+				auto const_assignment = oplist::make_ptr(oplist::t_assignment, delta, id);
+				const_assignment->set_expr(expr_tree::make_ptr(number->lexeme.as_int()));
+				get_last_entry_in_list(current_list_entry)->set_next(const_assignment);
+				current_list_entry = const_assignment;
 			}
 		};
 		parse_const_assignment();
@@ -47,11 +50,14 @@ oplist::ptr block() {
 	if(match_and_advance(VAR)) {
 		const auto& parse_var_decl = [&current_list_entry]() {
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
-				auto var_decl = oplist::make_ptr(oplist::t_assignment, ident->lexeme.as_string());
-				get_last_entry_in_list(current_list_entry)->set_next(var_decl);
-				current_list_entry = var_decl;
 				if(context::the().insert(ident->lexeme.as_string(), context::t_var) == context::c_already_declared)
 					VAR_ALREADY_DECLARED(ident->lexeme.as_string());
+				int delta, value;
+				LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
+				auto var_decl = oplist::make_ptr(oplist::t_assignment, delta, value);
+				var_decl->set_expr(expr_tree::make_ptr(0));
+				get_last_entry_in_list(current_list_entry)->set_next(var_decl);
+				current_list_entry = var_decl;
 			}
 		};
 		parse_var_decl();
@@ -65,16 +71,17 @@ oplist::ptr block() {
 		consume(SEMICOLON);
 		if(ident.has_value()) {
 			const auto& ident_str = ident->lexeme.as_string();
-			proc_decl = oplist::make_ptr(oplist::t_assignment, ident_str);
-			if(context::the().insert(ident_str, context::t_procedure) == context::c_already_declared)
+			if(context::the().insert(ident_str, context::t_procedure, {}, proc_decl) == context::c_already_declared)
 				PROCEDURE_ALREADY_DECLARED(ident_str);
 		}
 		context::the().level_up();
-		proc_decl->set_next(block());
+		auto b = block();
+		proc_decl->set_next(b);
 		consume(SEMICOLON);
+		get_last_entry_in_list(b)->set_next(oplist::make_ptr(oplist::t_end));
 		context::the().level_down();
-		get_last_entry_in_list(current_list_entry)->set_next(proc_decl);
-		current_list_entry = proc_decl;
+		// get_last_entry_in_list(current_list_entry)->set_next(proc_decl);
+		// current_list_entry = proc_decl;
 	}
 
 	get_last_entry_in_list(current_list_entry)->set_next(statement());
@@ -104,8 +111,9 @@ oplist::ptr assignment() {
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
 		consume(ASSIGNMENT);
-		auto a = oplist::make_ptr(oplist::t_assignment, ident->lexeme.as_string());
-		CHECK_TYPE(ident->lexeme.as_string(), context::t_var);
+		int delta, value;
+		LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
+		auto a = oplist::make_ptr(oplist::t_assignment, delta, value);
 		a->set_expr(expression());
 		return a;
 	}
@@ -113,14 +121,13 @@ oplist::ptr assignment() {
 }
 
 oplist::ptr call() {
-	// TODO context in den parser packen
-	// TODO CALL ist dann ein unbedingter sprint auf den BEGIN Knoten der Proc.
 	consume(CALL);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
 		const auto& ident_str = ident->lexeme.as_string();
-		CHECK_TYPE(ident_str, context::t_procedure);
-		return oplist::make_ptr(oplist::t_call, ident_str);
+		int delta, value;
+		LOOKUP(ident->lexeme.as_string(), context::t_procedure, delta, value);
+		return oplist::make_ptr(oplist::t_call, delta, value);
 	}
 	return oplist::make_ptr();
 }
@@ -130,8 +137,9 @@ oplist::ptr get() {
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
 		const auto& ident_str = ident->lexeme.as_string();
-		CHECK_TYPE(ident_str, context::t_var);
-		return oplist::make_ptr(oplist::t_get, ident_str);
+		int delta, value;
+		LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
+		return oplist::make_ptr(oplist::t_get, delta, value);
 	}
 	return oplist::make_ptr();
 }
@@ -164,7 +172,7 @@ oplist::ptr condition() {
 	consume(THEN);
 	auto stmt = statement();
 	if_stmt->set_next(stmt);
-	stmt->set_next(nop);
+	get_last_entry_in_list(stmt)->set_next(nop);
 	if_stmt->set_jmp(nop);
 	return if_stmt;
 }
@@ -179,8 +187,8 @@ oplist::ptr loop() {
 	auto stmt = statement();
 	while_loop->set_next(stmt);
 	jmp->set_jmp(while_loop);
-	stmt->set_next(jmp);
-	stmt->set_next(nop);
+	jmp->set_next(nop);
+	get_last_entry_in_list(stmt)->set_next(jmp);
 	while_loop->set_jmp(nop);
 	return while_loop;
 }
@@ -219,8 +227,9 @@ expr_tree::ptr factor() {
 		case IDENT:
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
 				const auto& ident_str = ident->lexeme.as_string();
-				CHECK_TYPE(ident_str, context::t_const | context::t_var);
-				return expr_tree::make_ptr(ident_str);
+				int delta, value;
+				LOOKUP(ident_str, context::t_const | context::t_var, delta, value);
+				return expr_tree::make_ptr(delta, value);
 			}
 		case NUMBER:
 			if(const auto& ident = consume(NUMBER); ident.has_value())

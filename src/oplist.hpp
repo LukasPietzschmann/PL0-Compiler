@@ -1,9 +1,9 @@
 #pragma once
 
 #include <ostream>
-#include <string>
 #include <utility>
 
+#include "context.hpp"
 #include "token_type.hpp"
 
 class expr_tree {
@@ -12,7 +12,7 @@ public:
 	enum expr_type { t_ident, t_value, t_oper };
 
 	explicit expr_tree(int int_val);
-	explicit expr_tree(std::string ident);
+	expr_tree(int delta, int id);
 	expr_tree(expr_tree::ptr lhs, expr_tree::ptr rhs, token_type oper);
 
 	~expr_tree();
@@ -26,7 +26,7 @@ public:
 	expr_tree::ptr get_lhs() const;
 	expr_tree::ptr get_rhs() const;
 	token_type get_oper() const;
-	const std::string& get_ident() const;
+	const context::context_position& get_position() const;
 	int get_int_val() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const expr_tree& tree);
@@ -37,7 +37,7 @@ private:
 	expr_tree::ptr m_rhs;
 	union {
 		token_type m_oper;
-		std::string m_ident;
+		context::context_position m_pos_in_context;
 		int m_int_val;
 	};
 };
@@ -47,7 +47,7 @@ public:
 	using ptr = std::shared_ptr<oplist>;
 	using entry_type = enum { t_end, t_assignment, t_call, t_get, t_post, t_cond_jmp, t_jmp, t_nop };
 
-	explicit oplist(entry_type type = t_nop, std::string identifier = "");
+	explicit oplist(entry_type type = t_nop, int delta = -1, int id = -1);
 
 	template <typename... Args>
 	static oplist::ptr make_ptr(Args... args) {
@@ -61,13 +61,13 @@ public:
 	oplist::ptr get_jmp() const;
 	expr_tree::ptr get_expr() const;
 	entry_type get_type() const;
-	const std::string& get_identifier() const;
+	const context::context_position& get_position() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const oplist& oplist);
 
 private:
 	entry_type m_type;
-	std::string m_identifier;
+	context::context_position m_pos_in_context;
 	oplist::ptr m_next{nullptr};
 	oplist::ptr m_jmp{nullptr};
 	expr_tree::ptr m_expr{nullptr};
