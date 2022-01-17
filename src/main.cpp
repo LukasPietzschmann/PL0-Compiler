@@ -7,10 +7,14 @@
 
 int main(int argc, char** argv) {
 	if(argc > 1) {
-		FILE* input = fopen(*(argv + 1), "r");
-		if(!input)
+		std::string raw_input_file_name(*(argv + 1));
+		std::string adjusted_input_file_name;
+		if(!raw_input_file_name.ends_with(".pl0"))
+			adjusted_input_file_name = raw_input_file_name + ".pl0";
+		FILE* input_file = fopen(adjusted_input_file_name.c_str(), "r");
+		if(!input_file)
 			return -1;
-		yyin = input;
+		yyin = input_file;
 	}
 	oplist::ptr pars_res = parse();
 	pars_res = optimize_nops(pars_res);
