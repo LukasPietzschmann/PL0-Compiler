@@ -2,7 +2,7 @@
 
 token current_token;
 
-oplist::ptr parse() {
+stmt_list::ptr parse() {
 	context::the().level_up();
 	current_token = get_token();
 	auto list = program();
@@ -15,15 +15,15 @@ oplist::ptr parse() {
 
 token inline get_token() { return yylex(); }
 
-oplist::ptr program() {
+stmt_list::ptr program() {
 	auto list = block();
 	consume(DOT);
-	// get_last_entry_in_list(list)->set_next(oplist::make_ptr(oplist::t_end));
+	// get_last_entry_in_list(list)->set_next(stmt_list::make_ptr(stmt_list::t_end));
 	return list;
 }
 
-oplist::ptr block() {
-	auto start = oplist::make_ptr();
+stmt_list::ptr block() {
+	auto start = stmt_list::make_ptr();
 	auto current_list_entry = start;
 	if(match(CONST)) {
 		const auto& parse_const_assignment = [&current_list_entry]() {
@@ -36,7 +36,7 @@ oplist::ptr block() {
 					CONST_ALREADY_DECLARED(ident->lexeme.as_string());
 				int delta, id;
 				LOOKUP(ident->lexeme.as_string(), context::t_const, delta, id);
-				auto const_assignment = oplist::make_ptr(oplist::t_assignment, delta, id);
+				auto const_assignment = stmt_list::make_ptr(stmt_list::t_assignment, delta, id);
 				const_assignment->set_expr(expr_tree::make_ptr(number->lexeme.as_int()));
 				get_last_entry_in_list(current_list_entry)->set_next(const_assignment);
 				current_list_entry = const_assignment;
@@ -54,7 +54,7 @@ oplist::ptr block() {
 					VAR_ALREADY_DECLARED(ident->lexeme.as_string());
 				int delta, value;
 				LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
-				auto var_decl = oplist::make_ptr(oplist::t_assignment, delta, value);
+				auto var_decl = stmt_list::make_ptr(stmt_list::t_assignment, delta, value);
 				var_decl->set_expr(expr_tree::make_ptr(0));
 				get_last_entry_in_list(current_list_entry)->set_next(var_decl);
 				current_list_entry = var_decl;
@@ -66,7 +66,7 @@ oplist::ptr block() {
 		consume(SEMICOLON);
 	}
 	while(match_and_advance(PROCEDURE)) {
-		auto proc_decl = oplist::make_ptr();
+		auto proc_decl = stmt_list::make_ptr();
 		const auto& ident = consume(IDENT);
 		consume(SEMICOLON);
 		if(ident.has_value()) {
@@ -78,7 +78,7 @@ oplist::ptr block() {
 		auto b = block();
 		proc_decl->set_next(b);
 		consume(SEMICOLON);
-		get_last_entry_in_list(b)->set_next(oplist::make_ptr(oplist::t_end));
+		get_last_entry_in_list(b)->set_next(stmt_list::make_ptr(stmt_list::t_end));
 		proc_decl = optimize_nops(proc_decl);
 		context::the().level_down();
 	}
@@ -88,7 +88,7 @@ oplist::ptr block() {
 	return start;
 }
 
-oplist::ptr statement() {
+stmt_list::ptr statement() {
 	if(match(IDENT))
 		return assignment();
 	else if(match(CALL))
@@ -103,54 +103,54 @@ oplist::ptr statement() {
 		return condition();
 	else if(match(WHILE))
 		return loop();
-	return oplist::make_ptr();
+	return stmt_list::make_ptr();
 }
 
-oplist::ptr assignment() {
+stmt_list::ptr assignment() {
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
 		consume(ASSIGNMENT);
 		int delta, value;
 		LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
-		auto a = oplist::make_ptr(oplist::t_assignment, delta, value);
+		auto a = stmt_list::make_ptr(stmt_list::t_assignment, delta, value);
 		a->set_expr(expression());
 		return a;
 	}
-	return oplist::make_ptr();
+	return stmt_list::make_ptr();
 }
 
-oplist::ptr call() {
+stmt_list::ptr call() {
 	consume(CALL);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
 		const auto& ident_str = ident->lexeme.as_string();
 		int delta, value;
 		LOOKUP(ident->lexeme.as_string(), context::t_procedure, delta, value);
-		return oplist::make_ptr(oplist::t_call, delta, value);
+		return stmt_list::make_ptr(stmt_list::t_call, delta, value);
 	}
-	return oplist::make_ptr();
+	return stmt_list::make_ptr();
 }
 
-oplist::ptr get() {
+stmt_list::ptr get() {
 	consume(GET);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
 		const auto& ident_str = ident->lexeme.as_string();
 		int delta, value;
 		LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
-		return oplist::make_ptr(oplist::t_get, delta, value);
+		return stmt_list::make_ptr(stmt_list::t_get, delta, value);
 	}
-	return oplist::make_ptr();
+	return stmt_list::make_ptr();
 }
 
-oplist::ptr post() {
+stmt_list::ptr post() {
 	consume(POST);
-	auto post = oplist::make_ptr(oplist::t_post);
+	auto post = stmt_list::make_ptr(stmt_list::t_post);
 	post->set_expr(expression());
 	return post;
 }
 
-oplist::ptr begin() {
+stmt_list::ptr begin() {
 	consume(BEG);
 	auto stmt = statement();
 	auto stmt_to_set_next_on = stmt;
@@ -163,10 +163,10 @@ oplist::ptr begin() {
 	return stmt;
 }
 
-oplist::ptr condition() {
+stmt_list::ptr condition() {
 	consume(IF);
-	auto if_stmt = oplist::make_ptr(oplist::t_cond_jmp);
-	auto nop = oplist::make_ptr(oplist::t_nop);
+	auto if_stmt = stmt_list::make_ptr(stmt_list::t_cond_jmp);
+	auto nop = stmt_list::make_ptr(stmt_list::t_nop);
 	if_stmt->set_expr(comparison());
 	consume(THEN);
 	auto stmt = statement();
@@ -176,11 +176,11 @@ oplist::ptr condition() {
 	return if_stmt;
 }
 
-oplist::ptr loop() {
+stmt_list::ptr loop() {
 	consume(WHILE);
-	auto while_loop = oplist::make_ptr(oplist::t_cond_jmp);
-	auto jmp = oplist::make_ptr(oplist::t_jmp);
-	auto nop = oplist::make_ptr(oplist::t_nop);
+	auto while_loop = stmt_list::make_ptr(stmt_list::t_cond_jmp);
+	auto jmp = stmt_list::make_ptr(stmt_list::t_jmp);
+	auto nop = stmt_list::make_ptr(stmt_list::t_nop);
 	while_loop->set_expr(comparison());
 	consume(DO);
 	auto stmt = statement();
@@ -284,7 +284,7 @@ std::optional<token> consume(Args... types) {
 	return {};
 }
 
-inline oplist::ptr get_last_entry_in_list(oplist::ptr list) {
+inline stmt_list::ptr get_last_entry_in_list(stmt_list::ptr list) {
 	assert(list != nullptr);
 	if(list->get_next() == nullptr)
 		return list;

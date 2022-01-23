@@ -1,5 +1,5 @@
 #pragma once
 
-#include "oplist.hpp"
+#include "stmt_list.hpp"
 
-oplist::ptr optimize_nops(oplist::ptr list);
+stmt_list::ptr optimize_nops(stmt_list::ptr list);

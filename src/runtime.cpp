@@ -15,7 +15,7 @@ int operator/(const expr_result& lhs, const expr_result& rhs) { return lhs.num_v
 int operator%(const expr_result& lhs, int rhs) { return lhs.num_value / rhs; }
 std::ostream& operator<<(std::ostream& os, const expr_result& res) { return os << res.num_value; }
 
-void exec(oplist::ptr list) {
+void exec(stmt_list::ptr list) {
 	assert(list != nullptr);
 	const auto& set_ident_to_new_value = [&list](int new_value) {
 		int sf = stack::the().walk_sl_chain(list->get_position().delta);
@@ -24,30 +24,30 @@ void exec(oplist::ptr list) {
 
 	const context::proc_table_entry* proc_info;
 	switch(list->get_type()) {
-		case oplist::t_assignment: set_ident_to_new_value(exec(list->get_expr()).num_value); break;
-		case oplist::t_call:
+		case stmt_list::t_assignment: set_ident_to_new_value(exec(list->get_expr()).num_value); break;
+		case stmt_list::t_call:
 			proc_info = &context::the().lookup_procedure(list->get_position().id);
 			stack::the().push_sf(proc_info->number_of_variables, list->get_position().delta);
 			exec(proc_info->procedure);
 			stack::the().pop_sf();
 			break;
-		case oplist::t_get:
+		case stmt_list::t_get:
 			int new_val;
 			std::cin >> new_val;
 			set_ident_to_new_value(new_val);
 			break;
-		case oplist::t_post: std::cout << exec(list->get_expr()) << std::endl; break;
-		case oplist::t_cond_jmp:
+		case stmt_list::t_post: std::cout << exec(list->get_expr()) << std::endl; break;
+		case stmt_list::t_cond_jmp:
 			if(const expr_result& cond = exec(list->get_expr()); !cond.bool_value) {
 				exec(list->get_jmp());
 				return;
 			}
 			break;
-		case oplist::t_jmp: exec(list->get_jmp()); break;
-		case oplist::t_end: break;
-		case oplist::t_nop: break;
+		case stmt_list::t_jmp: exec(list->get_jmp()); break;
+		case stmt_list::t_end: break;
+		case stmt_list::t_nop: break;
 	}
-	if(list->get_type() != oplist::t_jmp && list->get_next() != nullptr)
+	if(list->get_type() != stmt_list::t_jmp && list->get_next() != nullptr)
 		exec(list->get_next());
 }
 

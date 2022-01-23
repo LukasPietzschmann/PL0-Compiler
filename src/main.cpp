@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 			return -1;
 		yyin = input_file;
 	}
-	oplist::ptr pars_res = parse();
+	stmt_list::ptr pars_res = parse();
 	pars_res = optimize_nops(pars_res);
 
 	if(pars_res == nullptr)

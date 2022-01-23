@@ -30,11 +30,11 @@
 		}                                                                                                  \
 	} while(0)
 
-class oplist;
+class stmt_list;
 class context {
 public:
 	struct proc_table_entry {
-		std::shared_ptr<oplist> procedure;
+		std::shared_ptr<stmt_list> procedure;
 		int number_of_variables;
 	};
 
@@ -68,7 +68,7 @@ public:
 	error_code insert(const std::string& name,
 			entry_type type,
 			std::optional<int> value = {},
-			std::shared_ptr<oplist> proc_start = {});
+			std::shared_ptr<stmt_list> proc_start = {});
 	error_code lookup(const std::string& name, int type, int& out_level_delta, int& out_value) const;
 	const context::proc_table_entry& lookup_procedure(int number) const;
 

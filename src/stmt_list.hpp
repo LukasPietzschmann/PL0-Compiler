@@ -42,33 +42,33 @@ private:
 	};
 };
 
-class oplist {
+class stmt_list {
 public:
-	using ptr = std::shared_ptr<oplist>;
+	using ptr = std::shared_ptr<stmt_list>;
 	using entry_type = enum { t_end, t_assignment, t_call, t_get, t_post, t_cond_jmp, t_jmp, t_nop };
 
-	explicit oplist(entry_type type = t_nop, int delta = -1, int id = -1);
+	explicit stmt_list(entry_type type = t_nop, int delta = -1, int id = -1);
 
 	template <typename... Args>
-	static oplist::ptr make_ptr(Args... args) {
-		return std::make_shared<oplist>(args...);
+	static stmt_list::ptr make_ptr(Args... args) {
+		return std::make_shared<stmt_list>(args...);
 	}
 
-	void set_next(oplist::ptr next);
-	void set_jmp(oplist::ptr jmp);
+	void set_next(stmt_list::ptr next);
+	void set_jmp(stmt_list::ptr jmp);
 	void set_expr(expr_tree::ptr expr);
-	oplist::ptr get_next() const;
-	oplist::ptr get_jmp() const;
+	stmt_list::ptr get_next() const;
+	stmt_list::ptr get_jmp() const;
 	expr_tree::ptr get_expr() const;
 	entry_type get_type() const;
 	const context::context_position& get_position() const;
 
-	friend std::ostream& operator<<(std::ostream& os, const oplist& oplist);
+	friend std::ostream& operator<<(std::ostream& os, const stmt_list& oplist);
 
 private:
 	entry_type m_type;
 	context::context_position m_pos_in_context;
-	oplist::ptr m_next{nullptr};
-	oplist::ptr m_jmp{nullptr};
+	stmt_list::ptr m_next{nullptr};
+	stmt_list::ptr m_jmp{nullptr};
 	expr_tree::ptr m_expr{nullptr};
 };

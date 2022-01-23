@@ -36,7 +36,7 @@ void context::level_down() {
 context::error_code context::insert(const std::string& name,
 		context::entry_type type,
 		std::optional<int> value,
-		std::shared_ptr<oplist> proc_start) {
+		std::shared_ptr<stmt_list> proc_start) {
 	assert(type != t_unset);
 	static uint32_t next_procedure_id = 1;
 	int value_to_insert = value.has_value() ? *value : 0;

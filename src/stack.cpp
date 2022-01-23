@@ -32,6 +32,6 @@ void stack::set_at(int pos, int value) {
 }
 
 int stack::get_at(int pos) const {
-	assert(pos > 0);
+	assert(pos >= 0);
 	return m_elements.at(pos);
 }
