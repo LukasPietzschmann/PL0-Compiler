@@ -37,7 +37,7 @@ unsigned int line = 1;
 "(" return (token){PAREN_OPEN, line, yytext};
 ")" return (token){PAREN_CLOSE, line, yytext};
 [0-9]+ return (token){NUMBER, line, yytext};
-[a-zA-Z][0-9a-zA-Z]* return (token){IDENT, line, yytext};
+[a-zA-Z_][0-9a-zA-Z_]* return (token){IDENT, line, yytext};
 <COMMENT>"*)" BEGIN 0;
 <COMMENT>[^"*)"]+ ;
 <COMMENT>"\n" ++line;
