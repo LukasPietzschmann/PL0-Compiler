@@ -1,3 +1,5 @@
+add_subdirectory(aassembler)
+
 cmake_policy(SET CMP0098 OLD)
 find_package(FLEX)
 FLEX_TARGET(lexer lexer.lex lexer.cpp DEFINES_FILE lexer.hpp)

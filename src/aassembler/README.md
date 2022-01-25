@@ -1,0 +1,1 @@
+!!! All files in this directory were provided by [Prof. Dr. Winfried Bantel](https://bantel.informatik.hs-aalen.de) !!!
