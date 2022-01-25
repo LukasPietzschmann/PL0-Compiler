@@ -9,7 +9,7 @@ void dump_init(stmt_list::ptr start, std::ostream& os) {
 
 void dump_ram_up(std::ostream& os) {
 	// delta liegt über var_count auf dem stack
-	std::cout << "ram_up: nop" << std::endl;
+	os << "ram_up	nop" << std::endl;
 
 	// sl
 	COUT << "loadr 0" << std::endl;	 // TOS backup
@@ -28,11 +28,11 @@ void dump_ram_up(std::ostream& os) {
 		vc
 	 */
 
-	COUT << "for_loop_start: nop" << std::endl;
+	os << "for_loop_start	nop" << std::endl;
 	COUT << "loadr 0" << std::endl;	 // lade i
 	COUT << "swap" << std::endl;
 	COUT << "cmplt" << std::endl;
-	COUT << "jmpz for_loop_end" << std::endl;
+	COUT << "jumpz for_loop_end" << std::endl;
 	COUT << "swap" << std::endl;
 	/*
 		v
@@ -53,8 +53,8 @@ void dump_ram_up(std::ostream& os) {
 	COUT << "loads" << std::endl;
 	COUT << "swap" << std::endl;
 	COUT << "dup" << std::endl;
-	COUT << "jmp for_loop_start" << std::endl;
-	COUT << "for_loop_end: nop" << std::endl;
+	COUT << "jump for_loop_start" << std::endl;
+	os << "for_loop_end	nop" << std::endl;
 	/*
 		delta
 		delta
