@@ -1,7 +1,9 @@
 #include "code_gen.hpp"
 #include "context.hpp"
+// clang-format off
 #include "parser.hpp"
 #include "lexer.hpp"
+// clang-format on
 #include "optimization.hpp"
 #include "runtime.hpp"
 #include "stack.hpp"
