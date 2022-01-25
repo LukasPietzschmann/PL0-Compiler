@@ -1,6 +1,13 @@
 #include "code_gen.hpp"
 
-void dump_ram_up() {
+void dump_init(stmt_list::ptr start, std::ostream& os) {
+	COUT << "loadc 0" << std::endl;
+	COUT << "storer 0" << std::endl;
+	COUT << "loadc 0" << std::endl;
+	COUT << "jump " << start.get() << std::endl;
+}
+
+void dump_ram_up(std::ostream& os) {
 	// delta liegt über var_count auf dem stack
 	std::cout << "ram_up: nop" << std::endl;
 
@@ -94,8 +101,8 @@ void dump_ram_up() {
 	COUT << "return" << std::endl;
 }
 
-void dump_ram_down() {
-	std::cout << "ram_down: nop" << std::endl;
+void dump_ram_down(std::ostream& os) {
+	os << "ram_down	nop" << std::endl;
 
 	COUT << "loadc 1" << std::endl;
 	COUT << "loadr 0" << std::endl;
@@ -109,7 +116,7 @@ void dump_ram_down() {
  * Lesezugriff: danach loads
  * Schreibzugriff: vorher wert auf den stack, danach stores
  */
-void dump_var_address(int delta, int id) {
+void dump_var_address(int delta, int id, std::ostream& os) {
 	COUT << "loadr 0" << std::endl;
 	for(int i = 0; i < delta; ++i)
 		COUT << "loads 0" << std::endl;
@@ -119,17 +126,17 @@ void dump_var_address(int delta, int id) {
 	COUT << "sub" << std::endl;
 }
 
-void gen(stmt_list::ptr stmt) {
+void gen(stmt_list::ptr stmt, std::ostream& os) {
 	assert(stmt != nullptr);
 
 	int sf;
 
-	std::cout << stmt.get() << ": nop" << std::endl;
+	os << stmt.get() << "	nop" << std::endl;
 
 	switch(stmt->get_type()) {
 		case stmt_list::t_assignment:
-			gen(stmt->get_expr());
-			dump_var_address(stmt->get_position().delta, stmt->get_position().id);
+			gen(stmt->get_expr(), os);
+			dump_var_address(stmt->get_position().delta, stmt->get_position().id, os);
 			COUT << "stores" << std::endl;
 			break;
 		case stmt_list::t_call:
@@ -142,15 +149,15 @@ void gen(stmt_list::ptr stmt) {
 			break;
 		case stmt_list::t_get:
 			COUT << "read" << std::endl;
-			dump_var_address(stmt->get_position().delta, stmt->get_position().id);
+			dump_var_address(stmt->get_position().delta, stmt->get_position().id, os);
 			COUT << "stores" << std::endl;
 			break;
 		case stmt_list::t_post:
-			gen(stmt->get_expr());
+			gen(stmt->get_expr(), os);
 			COUT << "write" << std::endl;
 			break;
 		case stmt_list::t_cond_jmp:
-			gen(stmt->get_expr());
+			gen(stmt->get_expr(), os);
 			COUT << "jumpz " << stmt->get_jmp().get() << std::endl;
 			break;
 		case stmt_list::t_jmp: COUT << "jump " << stmt->get_jmp().get() << std::endl; break;
@@ -158,24 +165,24 @@ void gen(stmt_list::ptr stmt) {
 		case stmt_list::t_nop: COUT << "nop" << std::endl; break;
 	}
 	if(stmt_list::ptr next = stmt->get_next(); next != nullptr)
-		gen(next);
+		gen(next, os);
 }
 
-void gen(expr_tree::ptr expr) {
+void gen(expr_tree::ptr expr, std::ostream& os) {
 	assert(expr != nullptr);
 	if(expr->get_type() == expr_tree::t_value) {
 		COUT << "loadc " << expr->get_int_val() << std::endl;
 		return;
 	}
 	if(expr->get_type() == expr_tree::t_ident) {
-		dump_var_address(expr->get_position().delta, expr->get_position().id);
+		dump_var_address(expr->get_position().delta, expr->get_position().id, os);
 		COUT << "loads" << std::endl;
 		return;
 	}
 	// operatoren in postorder durchgehen -> upn
 	if(expr_tree::ptr lhs = expr->get_lhs(); lhs != nullptr)
-		gen(lhs);
-	gen(expr->get_lhs());
+		gen(lhs, os);
+	gen(expr->get_lhs(), os);
 	switch(expr->get_oper()) {
 		case EQUAL: COUT << "cmpeq" << std::endl; break;
 		case HASH: COUT << "cmpne" << std::endl; break;
