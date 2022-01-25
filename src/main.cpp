@@ -1,3 +1,4 @@
+#include "code_gen.hpp"
 #include "context.hpp"
 #include "parser.hpp"
 #include "lexer.hpp"
@@ -22,8 +23,15 @@ int main(int argc, char** argv) {
 	if(pars_res == nullptr)
 		return 1;
 
+	dump_ram_down();
+	dump_ram_up();
+	for(int i = 1; i < context::the().get_proc_count(); ++i)
+		gen(context::the().lookup_procedure(i).procedure);
+
 	stack::the().push_sf(context::the().lookup_procedure(0).number_of_variables, 0);
-	exec(pars_res);
+	gen(pars_res);
+
+	// exec(pars_res);
 
 	return 0;
 }

@@ -95,6 +95,7 @@ context::error_code context::lookup(const std::string& name, int type, int& out_
 }
 
 const context::proc_table_entry& context::lookup_procedure(int number) const { return m_proc_table.at(number); }
+int context::get_proc_count() const { return m_proc_table.size(); }
 
 std::ostream& operator<<(std::ostream& os, const context& context) {
 	const int level = context.m_context_table.size() - 1;

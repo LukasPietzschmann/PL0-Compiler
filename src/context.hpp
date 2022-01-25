@@ -71,6 +71,7 @@ public:
 			std::shared_ptr<stmt_list> proc_start = {});
 	error_code lookup(const std::string& name, int type, int& out_level_delta, int& out_value) const;
 	const context::proc_table_entry& lookup_procedure(int number) const;
+	int get_proc_count() const;
 
 	void print() const;
 	friend std::ostream& operator<<(std::ostream& os, const context& context);
