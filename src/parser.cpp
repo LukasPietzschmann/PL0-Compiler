@@ -52,12 +52,6 @@ stmt_list::ptr block() {
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
 				if(context::the().insert(ident->lexeme.as_string(), context::t_var) == context::c_already_declared)
 					VAR_ALREADY_DECLARED(ident->lexeme.as_string());
-				int delta, value;
-				LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
-				auto var_decl = stmt_list::make_ptr(stmt_list::t_assignment, delta, value);
-				var_decl->set_expr(expr_tree::make_ptr(0));
-				get_last_entry_in_list(current_list_entry)->set_next(var_decl);
-				current_list_entry = var_decl;
 			}
 		};
 		parse_var_decl();
