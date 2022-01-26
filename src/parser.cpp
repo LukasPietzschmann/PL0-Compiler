@@ -18,7 +18,7 @@ token inline get_token() { return yylex(); }
 stmt_list::ptr program() {
 	auto list = block();
 	consume(DOT);
-	// get_last_entry_in_list(list)->set_next(stmt_list::make_ptr(stmt_list::t_end));
+	get_last_entry_in_list(list)->set_next(stmt_list::make_ptr(stmt_list::t_end));
 	return list;
 }
 
