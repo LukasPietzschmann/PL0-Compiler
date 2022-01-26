@@ -179,10 +179,10 @@ void gen(expr_tree::ptr expr, std::ostream& os) {
 		COUT << "loads" << std::endl;
 		return;
 	}
-	// operatoren in postorder durchgehen -> upn
+
 	if(expr_tree::ptr lhs = expr->get_lhs(); lhs != nullptr)
 		gen(lhs, os);
-	gen(expr->get_lhs(), os);
+	gen(expr->get_rhs(), os);
 	switch(expr->get_oper()) {
 		case EQUAL: COUT << "cmpeq" << std::endl; break;
 		case HASH: COUT << "cmpne" << std::endl; break;
