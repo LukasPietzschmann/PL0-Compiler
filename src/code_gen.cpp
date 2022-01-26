@@ -15,9 +15,19 @@ void dump_ram_up(std::ostream& os) {
 
 	COUT << "loadr 0" << std::endl;
 	COUT << "add" << std::endl;
+#ifndef COMPILE_FOR_AAREST_WEB
 	COUT << "inc 2" << std::endl;
+#else
+	COUT << "loadc 2" << std::endl;
+	COUT << "add" << std::endl;
+#endif
 	COUT << "dup" << std::endl;
+#ifndef COMPILE_FOR_AAREST_WEB
 	COUT << "dec 1" << std::endl;
+#else
+	COUT << "loadc 1" << std::endl;
+	COUT << "sub" << std::endl;
+#endif
 	COUT << "loadr 0" << std::endl;
 	COUT << "swap" << std::endl;
 	COUT << "stores" << std::endl;
@@ -31,7 +41,12 @@ void dump_ram_down(std::ostream& os) {
 	os << "ram_down	nop" << std::endl;
 
 	COUT << "loadr 0" << std::endl;
+#ifndef COMPILE_FOR_AAREST_WEB
 	COUT << "dec 1" << std::endl;
+#else
+	COUT << "loadc 1" << std::endl;
+	COUT << "sub" << std::endl;
+#endif
 	COUT << "loads" << std::endl;
 	COUT << "storer 0" << std::endl;
 	COUT << "return" << std::endl;
@@ -45,7 +60,12 @@ void dump_var_address(int delta, int id, std::ostream& os) {
 	COUT << "loadr 0 # Get Var Address Begin" << std::endl;
 	for(int i = 0; i < delta; ++i)
 		COUT << "loads" << std::endl;
+#ifndef COMPILE_FOR_AAREST_WEB
 	COUT << "dec " << 2 + id << " # Get Var Address End" << std::endl;
+#else
+	COUT << "loadc " << 2 + id << " # Get Var Address End" << std::endl;
+	COUT << "sub" << std::endl;
+#endif
 }
 
 void gen(stmt_list::ptr stmt, std::ostream& os) {
@@ -83,7 +103,7 @@ void gen(stmt_list::ptr stmt, std::ostream& os) {
 		case stmt_list::t_end: COUT << "return" << std::endl; break;
 		case stmt_list::t_nop: COUT << "nop" << std::endl; break;
 	}
-	if(stmt_list::ptr next = stmt->get_next(); next != nullptr && stmt->get_type() != stmt_list::t_jmp)
+	if(stmt_list::ptr next = stmt->get_next(); next != nullptr)
 		gen(next, os);
 }
 
