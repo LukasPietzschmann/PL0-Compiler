@@ -108,7 +108,7 @@ void gen(stmt_list::ptr stmt, std::ostream& os) {
 			break;
 		case stmt_list::t_jmp: COUT << "jump " << stmt->get_jmp().get() << std::endl; break;
 		case stmt_list::t_end: COUT << "return" << std::endl; break;
-		case stmt_list::t_nop: COUT << "nop" << std::endl; break;
+		case stmt_list::t_nop: break;
 	}
 	if(stmt_list::ptr next = stmt->get_next(); next != nullptr)
 		gen(next, os);
