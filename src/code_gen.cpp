@@ -8,7 +8,7 @@ void dump_init(stmt_list::ptr start, std::ostream& os) {
 }
 
 /**
- * Number of variables on stack
+ * New static link below of number of variables on stack
  */
 void dump_ram_up(std::ostream& os) {
 	os << "ram_up	nop" << std::endl;
@@ -52,14 +52,20 @@ void dump_ram_down(std::ostream& os) {
 	COUT << "return" << std::endl;
 }
 
+void dump_calc_new_sl(int delta, std::ostream& os) {
+	COUT << "loadr 0 # Calc new SL Begin" << std::endl;
+	for(int i = 0; i < delta; ++i)
+		COUT << "loads" << std::endl;
+	COUT << "nop # Calc new SL End" << std::endl;
+}
+
 /**
  * Read: Call `loads` afterwards
  * Write: Put new value on stack before and call `stores` afterwards
  */
 void dump_var_address(int delta, int id, std::ostream& os) {
-	COUT << "loadr 0 # Get Var Address Begin" << std::endl;
-	for(int i = 0; i < delta; ++i)
-		COUT << "loads" << std::endl;
+	COUT << "nop # Get Var Address Begin" << std::endl;
+	dump_calc_new_sl(delta, os);
 #ifndef COMPILE_FOR_AAREST_WEB
 	COUT << "dec " << 2 + id << " # Get Var Address End" << std::endl;
 #else
@@ -80,6 +86,7 @@ void gen(stmt_list::ptr stmt, std::ostream& os) {
 			COUT << "stores" << std::endl;
 			break;
 		case stmt_list::t_call:
+			dump_calc_new_sl(stmt->get_position().delta, os);
 			COUT << "loadc " << context::the().lookup_procedure(stmt->get_position().id).number_of_variables
 				 << std::endl;
 			COUT << "call ram_up" << std::endl;
