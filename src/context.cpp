@@ -75,7 +75,11 @@ context::error_code context::insert(const std::string& name,
 	return c_okay;
 }
 
-context::error_code context::lookup(const std::string& name, int type, int& out_level_delta, int& out_value) const {
+context::error_code context::lookup(const std::string& name,
+		int type,
+		int& out_level_delta,
+		int& out_value,
+		entry_type& out_type) const {
 	assert(type != t_unset);
 	const int level = m_context_table.size() - 1;
 	int current_level = level + 1;
@@ -89,6 +93,7 @@ context::error_code context::lookup(const std::string& name, int type, int& out_
 	if(const context_entry& c = m_context_table[current_level].at(name); c.type & type) {
 		out_level_delta = level - current_level;
 		out_value = c.value;
+		out_type = c.type;
 		return c_okay;
 	} else
 		return c_wrong_type;

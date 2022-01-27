@@ -36,10 +36,6 @@ stmt_list::ptr block() {
 					CONST_ALREADY_DECLARED(ident->lexeme.as_string());
 				int delta, id;
 				LOOKUP(ident->lexeme.as_string(), context::t_const, delta, id);
-				auto const_assignment = stmt_list::make_ptr(stmt_list::t_assignment, delta, id);
-				const_assignment->set_expr(expr_tree::make_ptr(number->lexeme.as_int()));
-				get_last_entry_in_list(current_list_entry)->set_next(const_assignment);
-				current_list_entry = const_assignment;
 			}
 		};
 		parse_const_assignment();
@@ -221,7 +217,10 @@ expr_tree::ptr factor() {
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
 				const auto& ident_str = ident->lexeme.as_string();
 				int delta, value;
-				LOOKUP(ident_str, context::t_const | context::t_var, delta, value);
+				context::entry_type type;
+				LOOKUP_T(ident_str, context::t_const | context::t_var, delta, value, type);
+				if(type == context::entry_type::t_const)
+					return expr_tree::make_ptr(value);
 				return expr_tree::make_ptr(delta, value);
 			}
 		case NUMBER:

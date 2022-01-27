@@ -19,15 +19,21 @@
 #define PROCEDURE_ALREADY_DECLARED(name) SET_ERROR("Procedure " + (name) + " is already declared")
 #define UNKNOWN_IDENTIFIER(name) SET_ERROR("Use of undeclared identifier " + (name))
 
-#define LOOKUP(identifier, expected_type, out_level_delta, out_value)                                      \
-	do {                                                                                                   \
-		if(const auto& res = context::the().lookup(identifier, expected_type, out_level_delta, out_value); \
-				res != context::c_okay) {                                                                  \
-			if(res == context::c_not_found)                                                                \
-				UNKNOWN_IDENTIFIER(identifier);                                                            \
-			else if(res == context::c_wrong_type)                                                          \
-				UNEXPECTED_TYPE(identifier, expected_type);                                                \
-		}                                                                                                  \
+#define LOOKUP_T(identifier, expected_type, out_level_delta, out_value, out_type)                                    \
+	do {                                                                                                             \
+		if(const auto& res = context::the().lookup(identifier, expected_type, out_level_delta, out_value, out_type); \
+				res != context::c_okay) {                                                                            \
+			if(res == context::c_not_found)                                                                          \
+				UNKNOWN_IDENTIFIER(identifier);                                                                      \
+			else if(res == context::c_wrong_type)                                                                    \
+				UNEXPECTED_TYPE(identifier, expected_type);                                                          \
+		}                                                                                                            \
+	} while(0)
+
+#define LOOKUP(identifier, expected_type, out_level_delta, out_value)       \
+	do {                                                                    \
+		context::entry_type t;                                              \
+		LOOKUP_T(identifier, expected_type, out_level_delta, out_value, t); \
 	} while(0)
 
 class stmt_list;
@@ -69,7 +75,11 @@ public:
 			entry_type type,
 			std::optional<int> value = {},
 			std::shared_ptr<stmt_list> proc_start = {});
-	error_code lookup(const std::string& name, int type, int& out_level_delta, int& out_value) const;
+	error_code lookup(const std::string& name,
+			int type,
+			int& out_level_delta,
+			int& out_value,
+			entry_type& out_type) const;
 	const context::proc_table_entry& lookup_procedure(int number) const;
 	int get_proc_count() const;
 
