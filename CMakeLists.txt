@@ -11,4 +11,9 @@ if (${COMPILE_FOR_AAREST_WEB})
 	add_compile_definitions(COMPILE_FOR_AAREST_WEB)
 endif ()
 
+option(COMPILE_INTERPRETER "Set this option to compile the interpreter instead of the code generation" OFF)
+if (${COMPILE_INTERPRETER})
+	add_compile_definitions(COMPILE_INTERPRETER)
+endif ()
+
 add_subdirectory(src)

@@ -29,7 +29,6 @@ void exec(stmt_list::ptr list) {
 			proc_info = &context::the().lookup_procedure(list->get_position().id);
 			stack::the().push_sf(proc_info->number_of_variables, list->get_position().delta);
 			exec(proc_info->procedure);
-			stack::the().pop_sf();
 			break;
 		case stmt_list::t_get:
 			int new_val;
@@ -44,7 +43,7 @@ void exec(stmt_list::ptr list) {
 			}
 			break;
 		case stmt_list::t_jmp: exec(list->get_jmp()); break;
-		case stmt_list::t_end: break;
+		case stmt_list::t_end: stack::the().pop_sf(); break;
 		case stmt_list::t_nop: break;
 	}
 	if(list->get_type() != stmt_list::t_jmp && list->get_next() != nullptr)

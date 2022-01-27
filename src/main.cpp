@@ -7,6 +7,10 @@
 #include "lexer.hpp"
 // clang-format on
 #include "optimization.hpp"
+#ifdef COMPILE_INTERPRETER
+#include "runtime.hpp"
+#include "stack.hpp"
+#endif
 
 int main(int argc, char** argv) {
 	if(argc <= 1)
@@ -26,15 +30,18 @@ int main(int argc, char** argv) {
 
 	if(pars_res == nullptr)
 		return 1;
-
+#ifdef COMPILE_INTERPRETER
+	stack::the().push_sf(context::the().lookup_procedure(0).number_of_variables, 0);
+	exec(pars_res);
+#else
 	std::ofstream asm_out(raw_input_file_name + ".asm");
 	dump_init(pars_res, asm_out);
 	dump_ram_down(asm_out);
 	dump_ram_up(asm_out);
 	for(int i = 1; i < context::the().get_proc_count(); ++i)
 		gen(context::the().lookup_procedure(i).procedure, asm_out);
-
 	gen(pars_res, asm_out);
+#endif
 
 	return 0;
 }
