@@ -25,7 +25,7 @@ stmt_list::ptr program() {
 stmt_list::ptr block() {
 	auto start = stmt_list::make_ptr();
 	auto current_list_entry = start;
-	if(match(CONST)) {
+	if(match_and_advance(CONST)) {
 		const auto& parse_const_assignment = [&current_list_entry]() {
 			const auto& ident = consume(IDENT);
 			consume(EQUAL);
