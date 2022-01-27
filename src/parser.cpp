@@ -7,7 +7,7 @@ stmt_list::ptr parse() {
 	current_token = get_token();
 	auto list = program();
 	if(!match_and_advance(END_OF_FILE))
-		SET_ERROR("Found additional characters after the ^ of the program");
+		SET_ERROR("Found additional characters after the end of the program");
 	if(has_error)
 		return {};
 	return list;
