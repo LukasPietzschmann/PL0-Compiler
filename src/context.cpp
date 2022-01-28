@@ -101,15 +101,3 @@ context::error_code context::lookup(const std::string& name,
 
 const context::proc_table_entry& context::lookup_procedure(int number) const { return m_proc_table.at(number); }
 int context::get_proc_count() const { return m_proc_table.size(); }
-
-std::ostream& operator<<(std::ostream& os, const context& context) {
-	const int level = context.m_context_table.size() - 1;
-	for(int i = 0; i <= level; ++i) {
-		for(const auto& pos : context.m_context_table[i])
-			os << "Key: " << pos.first << pos.second.type << '\n';
-	}
-
-	return os;
-}
-
-void context::print() const { std::cout << *this << std::endl; }

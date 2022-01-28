@@ -83,9 +83,6 @@ public:
 	const context::proc_table_entry& lookup_procedure(int number) const;
 	int get_proc_count() const;
 
-	void print() const;
-	friend std::ostream& operator<<(std::ostream& os, const context& context);
-
 private:
 	context();
 	std::vector<std::unordered_map<std::string, context_entry> > m_context_table;
