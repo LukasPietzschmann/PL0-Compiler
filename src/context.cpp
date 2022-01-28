@@ -51,7 +51,7 @@ context::error_code context::insert(const std::string& name,
 		assert(value.has_value());
 		int var_count = 0;
 		for(const auto& [name, entry] : m_context_table[level]) {
-			if(entry.type & t_var | t_const)
+			if(entry.type == t_var)
 				++var_count;
 		}
 		assert(m_proc_table.at(m_proc_table.size() - 1).number_of_variables == var_count);
@@ -59,7 +59,7 @@ context::error_code context::insert(const std::string& name,
 	} else if(type == t_var) {
 		int var_count = 0;
 		for(const auto& [name, entry] : m_context_table[level]) {
-			if(entry.type & t_var | t_const)
+			if(entry.type == t_var)
 				++var_count;
 		}
 		assert(m_proc_table.at(m_proc_table.size() - 1).number_of_variables == var_count);
