@@ -4,7 +4,7 @@ stack::stack() : m_elements({0}) {}
 
 void stack::push_sf(int var_count, int delta) {
 	int new_tos = m_elements[0] + var_count + 2;
-	assert(new_tos < m_elements.size() && "Stack Overflow");
+	assert(static_cast<unsigned long>(new_tos) < m_elements.size() && "Stack Overflow");
 	int dl = m_elements[0];
 	int sl = walk_sl_chain(delta);
 

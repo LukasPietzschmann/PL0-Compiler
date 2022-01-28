@@ -18,7 +18,7 @@ std::string context::get_name_for_type(int entry_type) {
 		names.emplace_back("Procedure");
 
 	std::string output = names[0];
-	for(int i = 1; i < names.size(); ++i)
+	for(unsigned long i = 1; i < names.size(); ++i)
 		output += ", " + names[i];
 
 	return output;
@@ -99,5 +99,5 @@ context::error_code context::lookup(const std::string& name,
 		return c_wrong_type;
 }
 
-const context::proc_table_entry& context::lookup_procedure(int number) const { return m_proc_table.at(number); }
+const context::proc_table_entry& context::lookup_procedure(unsigned long number) const { return m_proc_table.at(number); }
 unsigned long context::get_proc_count() const { return m_proc_table.size(); }
