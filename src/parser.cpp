@@ -113,7 +113,6 @@ stmt_list::ptr call() {
 	consume(CALL);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		const auto& ident_str = ident->lexeme.as_string();
 		int delta, value;
 		LOOKUP(ident->lexeme.as_string(), context::t_procedure, delta, value);
 		return stmt_list::make_ptr(stmt_list::t_call, delta, value);
@@ -125,7 +124,6 @@ stmt_list::ptr get() {
 	consume(GET);
 	const auto& ident = consume(IDENT);
 	if(ident.has_value()) {
-		const auto& ident_str = ident->lexeme.as_string();
 		int delta, value;
 		LOOKUP(ident->lexeme.as_string(), context::t_var, delta, value);
 		return stmt_list::make_ptr(stmt_list::t_get, delta, value);
