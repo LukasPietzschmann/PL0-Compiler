@@ -15,7 +15,7 @@ int operator/(const expr_result& lhs, const expr_result& rhs) { return lhs.num_v
 int operator%(const expr_result& lhs, int rhs) { return lhs.num_value / rhs; }
 std::ostream& operator<<(std::ostream& os, const expr_result& res) { return os << res.num_value; }
 
-void exec(stmt_list::ptr list) {
+void exec(const stmt_list::ptr& list) {
 	assert(list != nullptr);
 	const auto& set_ident_to_new_value = [&list](int new_value) {
 		int sf = stack::the().walk_sl_chain(list->get_position().delta);
@@ -50,7 +50,7 @@ void exec(stmt_list::ptr list) {
 		exec(list->get_next());
 }
 
-expr_result exec(expr_tree::ptr expr) {
+expr_result exec(const expr_tree::ptr& expr) {
 	assert(expr != nullptr);
 	if(expr->get_type() == expr_tree::t_value)
 		return {expr->get_int_val()};

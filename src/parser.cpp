@@ -26,7 +26,7 @@ stmt_list::ptr block() {
 	auto start = stmt_list::make_ptr();
 	auto current_list_entry = start;
 	if(match_and_advance(CONST)) {
-		const auto& parse_const_assignment = [&current_list_entry]() {
+		const auto& parse_const_assignment = []() {
 			const auto& ident = consume(IDENT);
 			consume(EQUAL);
 			const auto& number = consume(NUMBER);
@@ -44,7 +44,7 @@ stmt_list::ptr block() {
 		consume(SEMICOLON);
 	}
 	if(match_and_advance(VAR)) {
-		const auto& parse_var_decl = [&current_list_entry]() {
+		const auto& parse_var_decl = []() {
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
 				if(context::the().insert(ident->lexeme.as_string(), context::t_var) == context::c_already_declared)
 					VAR_ALREADY_DECLARED(ident->lexeme.as_string());
@@ -69,7 +69,7 @@ stmt_list::ptr block() {
 		proc_decl->set_next(b);
 		consume(SEMICOLON);
 		get_last_entry_in_list(b)->set_next(stmt_list::make_ptr(stmt_list::t_end));
-		proc_decl = optimize_nops(proc_decl);
+		optimize_nops(proc_decl);
 		context::the().level_down();
 	}
 
@@ -231,7 +231,7 @@ expr_tree::ptr factor() {
 			expr = expression();
 			consume(PAREN_CLOSE);
 			return expr;
-		default: SET_ERROR("Unexpected Token");
+		default: assert(0);
 	}
 }
 

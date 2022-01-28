@@ -1,6 +1,6 @@
 #include "code_gen.hpp"
 
-void dump_init(stmt_list::ptr start, std::ostream& os) {
+void dump_init(const stmt_list::ptr& start, std::ostream& os) {
 	COUT << "loadc " << context::the().lookup_procedure(0).number_of_variables + 2 << " # Init Start" << std::endl;
 	COUT << "storer 0" << std::endl;
 	COUT << "loadc 0" << std::endl;
@@ -74,7 +74,7 @@ void dump_var_address(int delta, int id, std::ostream& os) {
 #endif
 }
 
-void gen(stmt_list::ptr stmt, std::ostream& os) {
+void gen(const stmt_list::ptr& stmt, std::ostream& os) {
 	assert(stmt != nullptr);
 
 	os << stmt.get() << "	nop" << std::endl;
@@ -114,7 +114,7 @@ void gen(stmt_list::ptr stmt, std::ostream& os) {
 		gen(next, os);
 }
 
-void gen(expr_tree::ptr expr, std::ostream& os) {
+void gen(const expr_tree::ptr& expr, std::ostream& os) {
 	assert(expr != nullptr);
 	if(expr->get_type() == expr_tree::t_value) {
 		COUT << "loadc " << expr->get_int_val() << std::endl;

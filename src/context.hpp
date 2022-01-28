@@ -81,7 +81,7 @@ public:
 			int& out_value,
 			entry_type& out_type) const;
 	const context::proc_table_entry& lookup_procedure(int number) const;
-	int get_proc_count() const;
+	unsigned long get_proc_count() const;
 
 private:
 	context();

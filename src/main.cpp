@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 	yyin = input_file;
 
 	stmt_list::ptr pars_res = parse();
-	pars_res = optimize_nops(pars_res);
+	optimize_nops(pars_res);
 
 	if(pars_res == nullptr)
 		return 1;
