@@ -81,7 +81,7 @@ public:
 			int& out_level_delta,
 			int& out_value,
 			entry_type& out_type) const;
-	const context::proc_table_entry& lookup_procedure(int number) const;
+	const context::proc_table_entry& lookup_procedure(unsigned long number) const;
 	unsigned long get_proc_count() const;
 
 private:

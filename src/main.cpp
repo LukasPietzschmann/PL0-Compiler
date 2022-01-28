@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	dump_init(pars_res, asm_out);
 	dump_ram_down(asm_out);
 	dump_ram_up(asm_out);
-	for(int i = 1; i < context::the().get_proc_count(); ++i)
+	for(unsigned long i = 1; i < context::the().get_proc_count(); ++i)
 		gen(context::the().lookup_procedure(i).procedure, asm_out);
 	gen(pars_res, asm_out);
 #endif
