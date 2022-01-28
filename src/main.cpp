@@ -1,6 +1,5 @@
 #include <fstream>
 
-#include "code_gen.hpp"
 #include "context.hpp"
 // clang-format off
 #include "parser.hpp"
@@ -10,6 +9,8 @@
 #ifdef COMPILE_INTERPRETER
 #include "runtime.hpp"
 #include "stack.hpp"
+#else
+#include "code_gen.hpp"
 #endif
 
 int main(int argc, char** argv) {
