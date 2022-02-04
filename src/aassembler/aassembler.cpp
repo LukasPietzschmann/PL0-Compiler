@@ -2328,7 +2328,9 @@ int main (int argc, char * argv[]) {
 
 void emit(int c, int a) {
 	static int lnr;
-	printf("%03d %4d %4d\n", lnr, c, a);
+	#ifdef AASSEMBLER_OUTPUT
+		printf("%03d %4d %4d\n", lnr, c, a);
+	#endif
 	fprintf(f_json, "%s[\"%s\",%d]", lnr?",\n\t":"\n\t", opct[c], a);
 	fwrite(&c, sizeof(c), 1, f_bin);
 	fwrite(&a, sizeof(a), 1, f_bin);
