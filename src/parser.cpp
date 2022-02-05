@@ -192,8 +192,12 @@ expr_tree::ptr comparison() {
 }
 
 expr_tree::ptr expression() {
-	match_and_advance(PLUS, MINUS);
-	auto lhs = term();
+	const auto& unary_op = match_and_advance(PLUS, MINUS);
+	expr_tree::ptr lhs;
+	if(unary_op.has_value())
+		lhs = expr_tree::make_ptr(expr_tree::make_ptr(0), term(), unary_op.value());
+	else
+		lhs = term();
 	while(const auto& token = match_and_advance(PLUS, MINUS))
 		lhs = expr_tree::make_ptr(lhs, term(), token.value());
 
