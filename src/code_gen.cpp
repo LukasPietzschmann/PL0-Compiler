@@ -142,7 +142,6 @@ void gen(const expr_tree::ptr& expr, std::ostream& os) {
 		case SLASH: COUT << "div" << std::endl; break;
 		case ODD:
 			COUT << "loadc 2" << std::endl;
-			COUT << "swap" << std::endl;
 			COUT << "mod" << std::endl;
 			break;
 		default: assert(false);
