@@ -1,16 +1,16 @@
-#include <fstream>
-
 #include "context.hpp"
 // clang-format off
 #include "parser.hpp"
 #include "lexer.hpp"
 // clang-format on
 #include "optimization.hpp"
-#ifdef COMPILE_INTERPRETER
+#ifdef BUILD_COMPILER
+#include <fstream>
+
+#include "code_gen.hpp"
+#else
 #include "runtime.hpp"
 #include "stack.hpp"
-#else
-#include "code_gen.hpp"
 #endif
 
 int main(int argc, char** argv) {
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 
 	if(pars_res == nullptr)
 		return 1;
-#ifdef COMPILE_INTERPRETER
+#ifndef BUILD_COMPILER
 	stack::the().push_sf(context::the().lookup_procedure(0).number_of_variables, 0);
 	exec(pars_res);
 #else

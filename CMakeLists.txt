@@ -11,11 +11,6 @@ if (${COMPILE_FOR_AAREST_WEB})
 	add_compile_definitions(COMPILE_FOR_AAREST_WEB)
 endif ()
 
-option(COMPILE_INTERPRETER "Set this option to compile the interpreter instead of the code generation" OFF)
-if (${COMPILE_INTERPRETER})
-	add_compile_definitions(COMPILE_INTERPRETER)
-endif ()
-
 add_subdirectory(src)
 
 set(EXAMPLE_FILE ${CMAKE_SOURCE_DIR}/example CACHE FILEPATH "Path to the pl0 file to execute when running compile_and_run_example (without the .pl0 extension)")
@@ -23,8 +18,8 @@ add_custom_target(compile_and_run_example
 		BYPRODUCTS ${EXAMPLE_FILE}.bin
 		BYPRODUCTS ${EXAMPLE_FILE}.asm
 		BYPRODUCTS ${EXAMPLE_FILE}.json
-		COMMAND pl-0 ${EXAMPLE_FILE}
+		COMMAND pl0c ${EXAMPLE_FILE}
 		COMMAND aassembler ${EXAMPLE_FILE}
 		COMMAND aarest-console ${EXAMPLE_FILE}
 		VERBATIM USES_TERMINAL)
-add_dependencies(compile_and_run_example pl-0 aassembler aarest-console)
+add_dependencies(compile_and_run_example pl0c aassembler aarest-console)
