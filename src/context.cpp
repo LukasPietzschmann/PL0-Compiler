@@ -54,8 +54,6 @@ context::error_code context::insert(const std::string& name,
 			if(entry.type == t_var)
 				++var_count;
 		}
-		assert(m_proc_table.at(m_proc_table.size() - 1).number_of_variables == var_count);
-		m_proc_table.at(static_cast<int>(m_proc_table.size() - 1)).number_of_variables += 1;
 	} else if(type == t_var) {
 		int var_count = 0;
 		for(const auto& [_, entry] : m_context_table.at(level)) {
