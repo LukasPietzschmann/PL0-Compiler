@@ -1,6 +1,12 @@
 #include "code_gen.hpp"
 
-void dump_init(const stmt_list::ptr& start, std::ostream& os) {
+code_gen::code_gen(const stmt_list::ptr& start, std::ofstream os) : m_os(std::move(os)) {
+	dump_init(start);
+	dump_ram_up();
+	dump_ram_down();
+}
+
+void code_gen::dump_init(const stmt_list::ptr& start) {
 	COUT << "loadc " << context::the().lookup_procedure(0).number_of_variables + 2 << " # Init Start" << std::endl;
 	COUT << "storer 0" << std::endl;
 	COUT << "loadc 0" << std::endl;
@@ -10,8 +16,8 @@ void dump_init(const stmt_list::ptr& start, std::ostream& os) {
 /**
  * New static link below of number of variables on stack
  */
-void dump_ram_up(std::ostream& os) {
-	os << "ram_up	nop" << std::endl;
+void code_gen::dump_ram_up() {
+	m_os << "ram_up	nop" << std::endl;
 
 	COUT << "loadr 0" << std::endl;
 	COUT << "add" << std::endl;
@@ -37,8 +43,8 @@ void dump_ram_up(std::ostream& os) {
 	COUT << "return" << std::endl;
 }
 
-void dump_ram_down(std::ostream& os) {
-	os << "ram_down	nop" << std::endl;
+void code_gen::dump_ram_down() {
+	m_os << "ram_down	nop" << std::endl;
 
 	COUT << "loadr 0" << std::endl;
 #ifndef COMPILE_FOR_AAREST_WEB
@@ -52,7 +58,7 @@ void dump_ram_down(std::ostream& os) {
 	COUT << "return" << std::endl;
 }
 
-void dump_calc_new_sl(int delta, std::ostream& os) {
+void code_gen::dump_calc_new_sl(int delta) {
 	COUT << "loadr 0 # Calc new SL Begin" << std::endl;
 	for(int i = 0; i < delta; ++i)
 		COUT << "loads" << std::endl;
@@ -63,9 +69,9 @@ void dump_calc_new_sl(int delta, std::ostream& os) {
  * Read: Call `loads` afterwards
  * Write: Put new value on stack before and call `stores` afterwards
  */
-void dump_var_address(int delta, int id, std::ostream& os) {
+void code_gen::dump_var_address(int delta, int id) {
 	COUT << "nop # Get Var Address Begin" << std::endl;
-	dump_calc_new_sl(delta, os);
+	dump_calc_new_sl(delta);
 #ifndef COMPILE_FOR_AAREST_WEB
 	COUT << "dec " << 2 + id << " # Get Var Address End" << std::endl;
 #else
@@ -74,19 +80,19 @@ void dump_var_address(int delta, int id, std::ostream& os) {
 #endif
 }
 
-void gen(const stmt_list::ptr& stmt, std::ostream& os) {
+void code_gen::gen(const stmt_list::ptr& stmt) {
 	assert(stmt != nullptr);
 
-	os << stmt.get() << "	nop" << std::endl;
+	m_os << stmt.get() << "	nop" << std::endl;
 
 	switch(stmt->get_type()) {
 		case stmt_list::t_assignment:
-			gen(stmt->get_expr(), os);
-			dump_var_address(stmt->get_position().delta, stmt->get_position().id, os);
+			gen(stmt->get_expr());
+			code_gen::dump_var_address(stmt->get_position().delta, stmt->get_position().id);
 			COUT << "stores" << std::endl;
 			break;
 		case stmt_list::t_call:
-			dump_calc_new_sl(stmt->get_position().delta, os);
+			dump_calc_new_sl(stmt->get_position().delta);
 			COUT << "loadc " << context::the().lookup_procedure(stmt->get_position().id).number_of_variables
 				 << std::endl;
 			COUT << "call ram_up" << std::endl;
@@ -95,15 +101,15 @@ void gen(const stmt_list::ptr& stmt, std::ostream& os) {
 			break;
 		case stmt_list::t_get:
 			COUT << "read" << std::endl;
-			dump_var_address(stmt->get_position().delta, stmt->get_position().id, os);
+			code_gen::dump_var_address(stmt->get_position().delta, stmt->get_position().id);
 			COUT << "stores" << std::endl;
 			break;
 		case stmt_list::t_post:
-			gen(stmt->get_expr(), os);
+			gen(stmt->get_expr());
 			COUT << "write" << std::endl;
 			break;
 		case stmt_list::t_cond_jmp:
-			gen(stmt->get_expr(), os);
+			gen(stmt->get_expr());
 			COUT << "jumpz " << stmt->get_jmp().get() << std::endl;
 			break;
 		case stmt_list::t_jmp: COUT << "jump " << stmt->get_jmp().get() << std::endl; break;
@@ -111,24 +117,24 @@ void gen(const stmt_list::ptr& stmt, std::ostream& os) {
 		case stmt_list::t_nop: break;
 	}
 	if(stmt_list::ptr next = stmt->get_next(); next != nullptr)
-		gen(next, os);
+		gen(next);
 }
 
-void gen(const expr_tree::ptr& expr, std::ostream& os) {
+void code_gen::gen(const expr_tree::ptr& expr) {
 	assert(expr != nullptr);
 	if(expr->get_type() == expr_tree::t_value) {
 		COUT << "loadc " << expr->get_int_val() << std::endl;
 		return;
 	}
 	if(expr->get_type() == expr_tree::t_ident) {
-		dump_var_address(expr->get_position().delta, expr->get_position().id, os);
+		code_gen::dump_var_address(expr->get_position().delta, expr->get_position().id);
 		COUT << "loads" << std::endl;
 		return;
 	}
 
 	if(expr_tree::ptr lhs = expr->get_lhs(); lhs != nullptr)
-		gen(lhs, os);
-	gen(expr->get_rhs(), os);
+		gen(lhs);
+	gen(expr->get_rhs());
 	switch(expr->get_oper()) {
 		case EQUAL: COUT << "cmpeq" << std::endl; break;
 		case HASH: COUT << "cmpne" << std::endl; break;
