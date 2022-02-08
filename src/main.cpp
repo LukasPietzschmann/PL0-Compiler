@@ -36,12 +36,10 @@ int main(int argc, char** argv) {
 	exec(pars_res);
 #else
 	std::ofstream asm_out(raw_input_file_name + ".asm");
-	dump_init(pars_res, asm_out);
-	dump_ram_down(asm_out);
-	dump_ram_up(asm_out);
+	code_gen cg(pars_res, std::move(asm_out));
 	for(unsigned long i = 1; i < context::the().get_proc_count(); ++i)
-		gen(context::the().lookup_procedure(i).procedure, asm_out);
-	gen(pars_res, asm_out);
+		cg.gen(context::the().lookup_procedure(i).procedure);
+	cg.gen(pars_res);
 #endif
 
 	return 0;
