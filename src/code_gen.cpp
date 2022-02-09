@@ -1,68 +1,55 @@
 #include "code_gen.hpp"
 
-code_gen::code_gen(const stmt_list::ptr& start, std::ofstream os) : m_os(std::move(os)) {
+code_gen::code_gen(const stmt_list::ptr& start, std::ofstream os) : m_emitter(std::forward<std::ofstream>(os)) {
 	dump_init(start);
 	dump_ram_up();
 	dump_ram_down();
 }
 
 void code_gen::dump_init(const stmt_list::ptr& start) {
-	COUT << "loadc " << context::the().lookup_procedure(0).number_of_variables + 2 << " # Init Start" << std::endl;
-	COUT << "storer 0" << std::endl;
-	COUT << "loadc 0" << std::endl;
-	COUT << "jump " << start.get() << " # Init End" << std::endl;
+	m_emitter.emit(emitter::t_loadc, context::the().lookup_procedure(0).number_of_variables + 2, {}, {}, "Init Start");
+	m_emitter.emit(emitter::t_storer, 0);
+	m_emitter.emit(emitter::t_loadc, 0);
+	std::stringstream ss;
+	ss << start.get();
+	m_emitter.emit(emitter::t_jmp, {}, ss.str(), {}, "Init End");
 }
 
 /**
  * New static link below of number of variables on stack
  */
 void code_gen::dump_ram_up() {
-	m_os << "ram_up	nop" << std::endl;
+	m_emitter.emit(emitter::t_nop, {}, {}, "ram_up");
 
-	COUT << "loadr 0" << std::endl;
-	COUT << "add" << std::endl;
-#ifndef COMPILE_FOR_AAREST_WEB
-	COUT << "inc 2" << std::endl;
-#else
-	COUT << "loadc 2" << std::endl;
-	COUT << "add" << std::endl;
-#endif
-	COUT << "dup" << std::endl;
-#ifndef COMPILE_FOR_AAREST_WEB
-	COUT << "dec 1" << std::endl;
-#else
-	COUT << "loadc 1" << std::endl;
-	COUT << "sub" << std::endl;
-#endif
-	COUT << "loadr 0" << std::endl;
-	COUT << "swap" << std::endl;
-	COUT << "stores" << std::endl;
-	COUT << "dup" << std::endl;
-	COUT << "storer 0" << std::endl;
-	COUT << "stores" << std::endl;
-	COUT << "return" << std::endl;
+	m_emitter.emit(emitter::t_loadr, 0);
+	m_emitter.emit(emitter::t_add);
+	m_emitter.emit(emitter::t_inc, 2);
+	m_emitter.emit(emitter::t_dup);
+	m_emitter.emit(emitter::t_dec, 1);
+	m_emitter.emit(emitter::t_loadr, 0);
+	m_emitter.emit(emitter::t_swap);
+	m_emitter.emit(emitter::t_stores);
+	m_emitter.emit(emitter::t_dup);
+	m_emitter.emit(emitter::t_storer, 0);
+	m_emitter.emit(emitter::t_stores);
+	m_emitter.emit(emitter::t_return);
 }
 
 void code_gen::dump_ram_down() {
-	m_os << "ram_down	nop" << std::endl;
+	m_emitter.emit(emitter::t_nop, {}, {}, "ram_down");
 
-	COUT << "loadr 0" << std::endl;
-#ifndef COMPILE_FOR_AAREST_WEB
-	COUT << "dec 1" << std::endl;
-#else
-	COUT << "loadc 1" << std::endl;
-	COUT << "sub" << std::endl;
-#endif
-	COUT << "loads" << std::endl;
-	COUT << "storer 0" << std::endl;
-	COUT << "return" << std::endl;
+	m_emitter.emit(emitter::t_loadr, 0);
+	m_emitter.emit(emitter::t_dec, 1);
+	m_emitter.emit(emitter::t_loads);
+	m_emitter.emit(emitter::t_storer, 0);
+	m_emitter.emit(emitter::t_return);
 }
 
 void code_gen::dump_calc_new_sl(int delta) {
-	COUT << "loadr 0 # Calc new SL Begin" << std::endl;
+	m_emitter.emit(emitter::t_loadr, 0, {}, {}, "Calc new SL begin");
 	for(int i = 0; i < delta; ++i)
-		COUT << "loads" << std::endl;
-	COUT << "nop # Calc new SL End" << std::endl;
+		m_emitter.emit(emitter::t_loads);
+	m_emitter.emit(emitter::t_nop, {}, {}, {}, "Calc new SL end");
 }
 
 /**
@@ -70,50 +57,53 @@ void code_gen::dump_calc_new_sl(int delta) {
  * Write: Put new value on stack before and call `stores` afterwards
  */
 void code_gen::dump_var_address(int delta, int id) {
-	COUT << "nop # Get Var Address Begin" << std::endl;
+	m_emitter.emit(emitter::t_nop, {}, {}, {}, "Get var address begin");
 	dump_calc_new_sl(delta);
-#ifndef COMPILE_FOR_AAREST_WEB
-	COUT << "dec " << 2 + id << " # Get Var Address End" << std::endl;
-#else
-	COUT << "loadc " << 2 + id << " # Get Var Address End" << std::endl;
-	COUT << "sub" << std::endl;
-#endif
+	m_emitter.emit(emitter::t_dec, 2 + id, {}, {}, "Get var address end");
 }
 
 void code_gen::gen(const stmt_list::ptr& stmt) {
 	assert(stmt != nullptr);
 
-	m_os << stmt.get() << "	nop" << std::endl;
+	std::stringstream ss;
+	ss << stmt.get();
+	m_emitter.emit(emitter::t_nop, {}, {}, ss.str());
+	ss.str("");
 
 	switch(stmt->get_type()) {
 		case stmt_list::t_assignment:
 			gen(stmt->get_expr());
 			code_gen::dump_var_address(stmt->get_position().delta, stmt->get_position().id);
-			COUT << "stores" << std::endl;
+			m_emitter.emit(emitter::t_stores);
 			break;
 		case stmt_list::t_call:
 			dump_calc_new_sl(stmt->get_position().delta);
-			COUT << "loadc " << context::the().lookup_procedure(stmt->get_position().id).number_of_variables
-				 << std::endl;
-			COUT << "call ram_up" << std::endl;
-			COUT << "call " << context::the().lookup_procedure(stmt->get_position().id).procedure.get() << std::endl;
-			COUT << "call ram_down" << std::endl;
+			m_emitter.emit(emitter::t_loadc,
+					context::the().lookup_procedure(stmt->get_position().id).number_of_variables);
+			m_emitter.emit(emitter::t_call, {}, "ram_up");
+			ss << context::the().lookup_procedure(stmt->get_position().id).procedure.get();
+			m_emitter.emit(emitter::t_call, {}, ss.str());
+			m_emitter.emit(emitter::t_call, {}, "ram_down");
 			break;
 		case stmt_list::t_get:
-			COUT << "read" << std::endl;
+			m_emitter.emit(emitter::t_read);
 			code_gen::dump_var_address(stmt->get_position().delta, stmt->get_position().id);
-			COUT << "stores" << std::endl;
+			m_emitter.emit(emitter::t_stores);
 			break;
 		case stmt_list::t_post:
 			gen(stmt->get_expr());
-			COUT << "write" << std::endl;
+			m_emitter.emit(emitter::t_write);
 			break;
 		case stmt_list::t_cond_jmp:
 			gen(stmt->get_expr());
-			COUT << "jumpz " << stmt->get_jmp().get() << std::endl;
+			ss << stmt->get_jmp().get();
+			m_emitter.emit(emitter::t_jmpz, {}, ss.str());
 			break;
-		case stmt_list::t_jmp: COUT << "jump " << stmt->get_jmp().get() << std::endl; break;
-		case stmt_list::t_end: COUT << "return" << std::endl; break;
+		case stmt_list::t_jmp:
+			ss << stmt->get_jmp().get();
+			m_emitter.emit(emitter::t_jmp, {}, ss.str());
+			break;
+		case stmt_list::t_end: m_emitter.emit(emitter::t_return); break;
 		case stmt_list::t_nop: break;
 	}
 	if(stmt_list::ptr next = stmt->get_next(); next != nullptr)
@@ -123,12 +113,12 @@ void code_gen::gen(const stmt_list::ptr& stmt) {
 void code_gen::gen(const expr_tree::ptr& expr) {
 	assert(expr != nullptr);
 	if(expr->get_type() == expr_tree::t_value) {
-		COUT << "loadc " << expr->get_int_val() << std::endl;
+		m_emitter.emit(emitter::t_loadc, expr->get_int_val());
 		return;
 	}
 	if(expr->get_type() == expr_tree::t_ident) {
 		code_gen::dump_var_address(expr->get_position().delta, expr->get_position().id);
-		COUT << "loads" << std::endl;
+		m_emitter.emit(emitter::t_loads);
 		return;
 	}
 
@@ -136,19 +126,19 @@ void code_gen::gen(const expr_tree::ptr& expr) {
 		gen(lhs);
 	gen(expr->get_rhs());
 	switch(expr->get_oper()) {
-		case EQUAL: COUT << "cmpeq" << std::endl; break;
-		case HASH: COUT << "cmpne" << std::endl; break;
-		case LESS: COUT << "cmplt" << std::endl; break;
-		case LESS_EQUAL: COUT << "cmple" << std::endl; break;
-		case GREATER: COUT << "cmpgt" << std::endl; break;
-		case GREATER_EQUAL: COUT << "cmpge" << std::endl; break;
-		case PLUS: COUT << "add" << std::endl; break;
-		case MINUS: COUT << "sub" << std::endl; break;
-		case STAR: COUT << "mult" << std::endl; break;
-		case SLASH: COUT << "div" << std::endl; break;
+		case EQUAL: m_emitter.emit(emitter::t_cmpeq); break;
+		case HASH: m_emitter.emit(emitter::t_cmpne); break;
+		case LESS: m_emitter.emit(emitter::t_cmplt); break;
+		case LESS_EQUAL: m_emitter.emit(emitter::t_cmple); break;
+		case GREATER: m_emitter.emit(emitter::t_cmpgt); break;
+		case GREATER_EQUAL: m_emitter.emit(emitter::t_cmpge); break;
+		case PLUS: m_emitter.emit(emitter::t_add); break;
+		case MINUS: m_emitter.emit(emitter::t_sub); break;
+		case STAR: m_emitter.emit(emitter::t_mult); break;
+		case SLASH: m_emitter.emit(emitter::t_div); break;
 		case ODD:
-			COUT << "loadc 2" << std::endl;
-			COUT << "mod" << std::endl;
+			m_emitter.emit(emitter::t_loadc, 2);
+			m_emitter.emit(emitter::t_mod);
 			break;
 		default: assert(false);
 	}

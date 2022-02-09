@@ -1,12 +1,12 @@
 #pragma once
 
 #include <fstream>
+#include <sstream>
 
 #include "context.hpp"
 #include "stack.hpp"
 #include "stmt_list.hpp"
-
-#define COUT m_os << "\t"
+#include "vm_emitter.hpp"
 
 class code_gen {
 public:
@@ -19,7 +19,7 @@ public:
 	void gen(const expr_tree::ptr& expr);
 
 private:
-	std::ofstream m_os;
+	vm_emitter m_emitter;
 
 	void dump_init(const stmt_list::ptr& start);
 	void dump_ram_up();
