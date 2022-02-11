@@ -23,14 +23,15 @@ int main(int argc, char** argv) {
 		adjusted_input_file_name = raw_input_file_name + ".pl0";
 	FILE* input_file = fopen(adjusted_input_file_name.c_str(), "r");
 	if(!input_file)
-		return -1;
+		return 1;
 	yyin = input_file;
 
 	stmt_list::ptr pars_res = parse();
-	optimize_nops(pars_res);
 
 	if(pars_res == nullptr)
 		return 1;
+
+	optimize_nops(pars_res);
 #ifndef BUILD_COMPILER
 	stack::the().push_sf(context::the().lookup_procedure(0).number_of_variables, 0);
 	exec(pars_res);
