@@ -6,9 +6,9 @@ TARGET = pl-0
 
 CPP ?= clang++
 CC ?= clang
-CPPFLAGS ?= -Wall -std=c++20
+CPPFLAGS = -Wall -std=c++20 -DBUILD_COMPILER=1
 
-_OBJS = lexer.o code_gen.o context.o logger.o main.o optimization.o parser.o runtime.o stack.o stmt_list.o token_type.o
+_OBJS = lexer.o code_gen.o context.o logger.o main.o optimization.o parser.o stmt_list.o token_type.o vm_emitter.o
 
 OBJS = $(patsubst %, $(OBJDIR)/%, $(_OBJS))
 
