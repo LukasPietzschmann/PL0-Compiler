@@ -151,6 +151,9 @@ stmt_list::ptr begin() {
 	return stmt;
 }
 
+/**
+ * if rule in grammar
+ */
 stmt_list::ptr condition() {
 	consume(IF);
 	auto if_stmt = stmt_list::make_ptr(stmt_list::t_cond_jmp);
@@ -180,6 +183,9 @@ stmt_list::ptr loop() {
 	return while_loop;
 }
 
+/**
+ * condition rule in grammar
+ */
 expr_tree::ptr comparison() {
 	if(match_and_advance(ODD))
 		return expr_tree::make_ptr(nullptr, expression(), ODD);
@@ -218,12 +224,12 @@ expr_tree::ptr factor() {
 		case IDENT:
 			if(const auto& ident = consume(IDENT); ident.has_value()) {
 				const auto& ident_str = ident->lexeme.as_string();
-				int delta, value;
+				int delta, value_or_id;
 				context::entry_type type;
-				LOOKUP_T(ident_str, context::t_const | context::t_var, delta, value, type);
+				LOOKUP_T(ident_str, context::t_const | context::t_var, delta, value_or_id, type);
 				if(type == context::entry_type::t_const)
-					return expr_tree::make_ptr(value);
-				return expr_tree::make_ptr(delta, value);
+					return expr_tree::make_ptr(value_or_id);
+				return expr_tree::make_ptr(delta, value_or_id);
 			}
 		case NUMBER:
 			if(const auto& ident = consume(NUMBER); ident.has_value())
@@ -233,7 +239,9 @@ expr_tree::ptr factor() {
 			expr = expression();
 			consume(PAREN_CLOSE);
 			return expr;
-		default: assert(0);
+		default:
+			SET_ERROR("Unexpected Token " + get_name_for_type(current_token.type));
+			return expr_tree::make_ptr(0);
 	}
 }
 
