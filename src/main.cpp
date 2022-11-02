@@ -13,13 +13,19 @@
 #include "code_gen.hpp"
 #endif
 
+inline bool ends_with(std::string const& value, std::string const& ending) {
+	if(ending.size() > value.size())
+		return false;
+	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
 int main(int argc, char** argv) {
 	if(argc <= 1)
 		return 1;
 
 	std::string raw_input_file_name(*(argv + 1));
 	std::string adjusted_input_file_name;
-	if(!raw_input_file_name.ends_with(".pl0"))
+	if(!ends_with(raw_input_file_name, ".pl0"))
 		adjusted_input_file_name = raw_input_file_name + ".pl0";
 	FILE* input_file = fopen(adjusted_input_file_name.c_str(), "r");
 	if(!input_file)

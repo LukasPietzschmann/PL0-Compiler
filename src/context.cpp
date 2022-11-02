@@ -44,7 +44,7 @@ context::error_code context::insert(const std::string& name,
 	const int level = static_cast<int>(m_context_table.size() - 1);
 	assert(level >= 0);
 
-	if(m_context_table.at(level).contains(name))
+	if(m_context_table.at(level).find(name) != m_context_table.at(level).end())
 		return c_already_declared;
 
 	if(type == t_const) {
@@ -82,7 +82,7 @@ context::error_code context::lookup(const std::string& name,
 	const int level = static_cast<int>(m_context_table.size() - 1);
 	int current_level = level + 1;
 
-	while(--current_level >= 0 && !m_context_table.at(current_level).contains(name))
+	while(--current_level >= 0 && m_context_table.at(current_level).find(name) == m_context_table.at(current_level).end())
 		continue;
 
 	if(current_level < 0)
